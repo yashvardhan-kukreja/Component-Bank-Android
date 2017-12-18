@@ -17,17 +17,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/profileRegNum"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:text="Reg. Number: 16BCE0320"/>
 
     <TextView
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:text="Components issued: 30"
         android:id="@+id/profileComponentsIssued"/>
 
-
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Issued Components"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/profileIssuedComponentsList"></ListView>
+</LinearLayout>
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>

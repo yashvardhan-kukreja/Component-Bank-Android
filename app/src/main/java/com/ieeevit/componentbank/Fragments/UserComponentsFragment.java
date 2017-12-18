@@ -36,6 +36,7 @@ import java.util.List;
  * Created by Yash 1300 on 12-12-2017.
  */
 
+@SuppressLint("ValidFragment")
 public class UserComponentsFragment extends Fragment {
     Context context;
     ListView components;
@@ -47,7 +48,16 @@ public class UserComponentsFragment extends Fragment {
     ArrayList<String> phoneNumsOfUsers;
     ArrayList<String> issueDatesOfUsers;
     ArrayList<String> emailsOfUsers;
+    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
 
+    @SuppressLint("ValidFragment")
+    public UserComponentsFragment(Context context, String currentUsername, String currentUserEmail, String currentUserRegNum, String currentUserPhoneNum) {
+        this.context = context;
+        this.currentUsername = currentUsername;
+        this.currentUserEmail = currentUserEmail;
+        this.currentUserRegNum = currentUserRegNum;
+        this.currentUserPhoneNum = currentUserPhoneNum;
+    }
 
     @Nullable
     @Override
@@ -111,6 +121,10 @@ public class UserComponentsFragment extends Fragment {
                                     intent.putExtra("userphonenums", phoneNumsOfUsers.toArray());
                                     intent.putExtra("userissuedates", issueDatesOfUsers.toArray());
                                     intent.putExtra("useremails", emailsOfUsers.toArray());
+                                    intent.putExtra("currentusername", currentUsername);
+                                    intent.putExtra("currentuserregnum", currentUserRegNum);
+                                    intent.putExtra("currentuseremail", currentUserEmail);
+                                    intent.putExtra("currentuserphonenum", currentUserPhoneNum);
                                     startActivity(intent);
                                 } catch (JSONException e) {
                                     Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();

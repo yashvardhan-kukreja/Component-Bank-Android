@@ -25,7 +25,9 @@ import com.ieeevit.componentbank.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,6 +135,7 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
                                 params.put("issuedbyregnum", currentUserRegNum);
                                 params.put("issuedbyphonenum", currentUserPhoneNum);
                                 params.put("issuedbyemail", currentUserEmail);
+                                params.put("issuedondate", (new SimpleDateFormat("dd-MM-yyyy").format(new Date())));
                                 return params;
                             }
                         };

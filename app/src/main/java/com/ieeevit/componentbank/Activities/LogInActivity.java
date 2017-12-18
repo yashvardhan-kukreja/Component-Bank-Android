@@ -53,60 +53,28 @@ ProgressDialog progressDialog;
                 if (emailString.isEmpty() || passwordString.isEmpty()){
                     Toast.makeText(LogInActivity.this, "Please enter all the details", Toast.LENGTH_LONG).show();
                 } else {
-
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, EMAIL_URL + "/checkemail", new Response.Listener<String>() {
+                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL + "/login", new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
+                            progressDialog.dismiss();
                             try {
-                                JSONObject jsonObject = new JSONObject(s);
-                                String success = jsonObject.getString("success");
-                                String message = jsonObject.getString("message");
-                                if (success.equals("true")){
-                                    progressDialog.dismiss();
+                                JSONObject jsonObject1 = new JSONObject(s);
+                                String success = jsonObject1.getString("success");
+                                String message = jsonObject1.getString("message");
+                                if (success.equals("false")){
                                     Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
                                 } else {
-                                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL + "/login", new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String s) {
-                                            progressDialog.dismiss();
-                                            try {
-                                                JSONObject jsonObject1 = new JSONObject(s);
-                                                String success = jsonObject1.getString("success");
-                                                String message = jsonObject1.getString("message");
-                                                if (success.equals("false")){
-                                                    Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
-                                                } else {
-                                                    Toast.makeText(LogInActivity.this, "You have successfully logged in", Toast.LENGTH_LONG).show();
-                                                    Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
-                                                    startActivity(i);
-                                                }
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                                Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError volleyError) {
-                                            progressDialog.dismiss();
-                                            volleyError.printStackTrace();
-                                            Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
-                                        }
-                                    }){
-                                        @Override
-                                        protected Map<String, String> getParams() throws AuthFailureError {
-                                            Map<String, String> params = new HashMap<>();
-                                            params.put("username", emailString);
-                                            params.put("password", passwordString);
-                                            return params;
-                                        }
-                                    };
-                                    Volley.newRequestQueue(LogInActivity.this).add(stringRequest1);
+                                    Toast.makeText(LogInActivity.this, "You have successfully logged in", Toast.LENGTH_LONG).show();
+                                    Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
+                                    i.putExtra("name", jsonObject1.getString("name"));
+                                    i.putExtra("regnum", jsonObject1.getString("regnum"));
+                                    i.putExtra("email", jsonObject1.getString("email"));
+                                    i.putExtra("phonenum", jsonObject1.getString("phonenum"));
+                                    startActivity(i);
                                 }
                             } catch (JSONException e) {
-                                progressDialog.dismiss();
-                                Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
                                 e.printStackTrace();
+                                Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -120,11 +88,12 @@ ProgressDialog progressDialog;
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> params = new HashMap<>();
-                            params.put("email", emailString);
+                            params.put("username", emailString);
+                            params.put("password", passwordString);
                             return params;
                         }
                     };
-                    Volley.newRequestQueue(LogInActivity.this).add(stringRequest);
+                    Volley.newRequestQueue(LogInActivity.this).add(stringRequest1);
                 }
             }
         });
