@@ -5,7 +5,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,10 +37,10 @@ ListView listOfIssuers;
 String nameStr, codeStr, availStr, valStr; //Component Details
 List<User> users;
 FloatingActionButton fab;
-String ISSUE_COMPONENT_URL = "";
+String ISSUE_COMPONENT_URL;
 EditText numberOfComponentsToBeIssued;
 Button yesConfirmation, cancelConfirmation;
-String[] names, regnums, phonenums, issuedDates, emails; //Users associated with those components;
+ArrayList<String> names, regnums, phonenums, issuedDates, emails, quantities; //Users associated with those components;
 AlertDialog confirmationDialog;
 String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
     @Override
@@ -49,6 +48,14 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_each_component);
         users = new ArrayList<>();
+        names = new ArrayList<>();
+        regnums = new ArrayList<>();
+        phonenums = new ArrayList<>();
+        issuedDates = new ArrayList<>();
+        emails = new ArrayList<>();
+        quantities =  new ArrayList<>();
+
+        ISSUE_COMPONENT_URL = getResources().getString(R.string.base_url) + "/issueComponent";
 
         //Fetching the details of the component from the previous activity
         nameStr = getIntent().getExtras().getString("name");
@@ -64,15 +71,17 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
 
 
         //Fetching list of the all the users with their details which have currently issued this component
-        names = getIntent().getExtras().getStringArray("usernames");
-        regnums = getIntent().getExtras().getStringArray("userregnums");
-        phonenums = getIntent().getExtras().getStringArray("userphonenums");
-        issuedDates = getIntent().getExtras().getStringArray("userissuedates");
-        emails = getIntent().getExtras().getStringArray("useremails");
+        names = getIntent().getExtras().getStringArrayList("usernames");
+        regnums = getIntent().getExtras().getStringArrayList("userregnums");
+        phonenums = getIntent().getExtras().getStringArrayList("userphonenums");
+        issuedDates = getIntent().getExtras().getStringArrayList("userissuedates");
+        emails = getIntent().getExtras().getStringArrayList("useremails");
+        quantities = getIntent().getExtras().getStringArrayList("userquantities");
 
-        for (int i=0;i<names.length;i++){
-            users.add((new User(names[i], regnums[i], emails[i], phonenums[i])));
+        for (int i=0;i<names.size();i++){
+            users.add((new User(names.get(i).toString(), regnums.get(i).toString(), emails.get(i).toString(), phonenums.get(i).toString())));
         }
+        final AlertDialog.Builder builder2 = new AlertDialog.Builder(EachComponentActivity.this);
 
         name = findViewById(R.id.componentName);
         code = findViewById(R.id.componentCode);
@@ -80,11 +89,12 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
         value = findViewById(R.id.componentValue);
         listOfIssuers = findViewById(R.id.listOfComponentIssuers);
         fab = findViewById(R.id.issueAComponent);
-        AlertDialog.Builder builder = new AlertDialog.Builder(EachComponentActivity.this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(EachComponentActivity.this);
         View v = getLayoutInflater().inflate(R.layout.dialog_component_confirmation, null, false);
         numberOfComponentsToBeIssued = v.findViewById(R.id.numberOfComponentsToBeIssued);
         yesConfirmation = v.findViewById(R.id.yesConfirmation);
         cancelConfirmation = v.findViewById(R.id.cancelConfirmation);
+        builder.setView(v);
         confirmationDialog = builder.create();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +109,7 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
                             Toast.makeText(EachComponentActivity.this, "Cool down! We don't have so may available components", Toast.LENGTH_LONG).show();
                             return;
                         }
+
                         //Request for issuing the component
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, ISSUE_COMPONENT_URL, new Response.Listener<String>() {
                             @Override
@@ -109,7 +120,8 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
                                     String message = jsonObject.getString("message");
                                     Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_LONG).show();
                                     if (success.equals("true")){
-                                        availability.setText(Integer.toString(Integer.parseInt(availStr) - Integer.parseInt(numberOfComponentsToBeIssued.getText().toString())));
+                                        availStr = Integer.toString(Integer.parseInt(availStr) - Integer.parseInt(numberOfComponentsToBeIssued.getText().toString()));
+                                        availability.setText("Available: " + availStr);
                                     }
                                     confirmationDialog.dismiss();
                                 } catch (JSONException e) {
@@ -155,31 +167,11 @@ String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum
 
         name.setText(nameStr);
         code.setText(codeStr);
-        availability.setText(availStr);
-        value.setText(valStr);
+        availability.setText("Available: " + availStr);
+        value.setText("Value: " + valStr);
 
-        listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, users)));
-        listOfIssuers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                View v = getLayoutInflater().inflate(R.layout.dialog_user_details, null, false);
-                TextView dialogName = v.findViewById(R.id.dialogUserName);
-                TextView dialogRegNum = v.findViewById(R.id.dialogRegNum);
-                TextView dialogEmail = v.findViewById(R.id.dialogEmailId);
-                TextView dialogContactNum = v.findViewById(R.id.dialogContactNum);
-                TextView dialogIssueDate = v.findViewById(R.id.dialogIssueDate);
+        listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, users, issuedDates, quantities)));
 
-                dialogName.setText(users.get(i).getName());
-                dialogRegNum.setText("Reg. Number: "+users.get(i).getRegNum());
-                dialogEmail.setText("E-mail ID: "+users.get(i).getEmail());
-                dialogContactNum.setText("Contact Number: "+users.get(i).getPhonenum());
-                dialogIssueDate.setText("Issued On: "+issuedDates[i]);
-                AlertDialog.Builder builder = new AlertDialog.Builder(EachComponentActivity.this);
-                builder.setView(v);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
 
     }
 }

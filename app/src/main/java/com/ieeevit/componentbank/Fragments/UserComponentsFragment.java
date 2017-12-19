@@ -42,12 +42,13 @@ public class UserComponentsFragment extends Fragment {
     ListView components;
     List<Component> componentList;
     ProgressDialog progressDialog;
-    String COMPONENT_LIST_GET_URL = "";
-    ArrayList<String> namesOfUsers;
-    ArrayList<String> regNumsOfUsers;
-    ArrayList<String> phoneNumsOfUsers;
-    ArrayList<String> issueDatesOfUsers;
-    ArrayList<String> emailsOfUsers;
+    String COMPONENT_LIST_GET_URL;
+    ArrayList<String> namesOfUsers = new ArrayList<>();
+    ArrayList<String> regNumsOfUsers = new ArrayList<>();
+    ArrayList<String> phoneNumsOfUsers = new ArrayList<>();
+    ArrayList<String> issueDatesOfUsers = new ArrayList<>();
+    ArrayList<String> emailsOfUsers = new ArrayList<>();
+    ArrayList<String> quantities = new ArrayList<>();
     String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
 
     @SuppressLint("ValidFragment")
@@ -69,7 +70,7 @@ public class UserComponentsFragment extends Fragment {
         progressDialog.setCancelable(false);
         progressDialog.show();
         componentList = new ArrayList<>();
-
+        COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url) + "/getcomponents";
         //Request for getting the list of components with their respective details
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, COMPONENT_LIST_GET_URL, new Response.Listener<String>() {
@@ -85,9 +86,10 @@ public class UserComponentsFragment extends Fragment {
                         progressDialog.dismiss();
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     } else {
-
+                        progressDialog.dismiss();
                         final JSONArray jsonArray = jsonObject.getJSONArray("components"); // For parsing the json array of components
                         componentList.clear();
+                        componentList = new ArrayList<>();
                         for (int position=0;position<jsonArray.length();position++){
                             Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("code"), jsonArray.getJSONObject(position).getString("quantity"));
                             componentList.add(component);
@@ -103,24 +105,33 @@ public class UserComponentsFragment extends Fragment {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                 try {
+                                    namesOfUsers.clear();
+                                    regNumsOfUsers.clear();
+                                    phoneNumsOfUsers.clear();
+                                    issueDatesOfUsers.clear();
+                                    emailsOfUsers.clear();
                                     JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("issuedBy");
                                     for (int j=0;j<jsonArray1.length();j++){
+                                        if (jsonArray1.length()>1 && j==0)
+                                            continue;
                                         namesOfUsers.add(jsonArray1.getJSONObject(j).getString("name"));
                                         regNumsOfUsers.add(jsonArray1.getJSONObject(j).getString("regnum"));
                                         phoneNumsOfUsers.add(jsonArray1.getJSONObject(j).getString("phonenum"));
                                         issueDatesOfUsers.add(jsonArray1.getJSONObject(j).getString("issuedOn"));
                                         emailsOfUsers.add(jsonArray1.getJSONObject(j).getString("email"));
+                                        quantities.add(jsonArray1.getJSONObject(j).getString("quantity"));
                                     }
                                     Intent intent = new Intent(context, EachComponentActivity.class);
                                     intent.putExtra("name", jsonArray.getJSONObject(i).getString("name")); // Sending the name of the component to the EachComponentActivity.java with the key "name"
                                     intent.putExtra("code", jsonArray.getJSONObject(i).getString("code")); // Sending the unique code of the component to the EachComponentActivity.java with the key "code"
                                     intent.putExtra("quantity", jsonArray.getJSONObject(i).getString("quantity")); // Sending the availability of the component to the EachComponentActivity.java with the key "quantity"
                                     intent.putExtra("value", jsonArray.getJSONObject(i).getString("value"));
-                                    intent.putExtra("usernames", namesOfUsers.toArray());
-                                    intent.putExtra("userregnums", regNumsOfUsers.toArray());
-                                    intent.putExtra("userphonenums", phoneNumsOfUsers.toArray());
-                                    intent.putExtra("userissuedates", issueDatesOfUsers.toArray());
-                                    intent.putExtra("useremails", emailsOfUsers.toArray());
+                                    intent.putExtra("usernames", namesOfUsers);
+                                    intent.putExtra("userregnums", regNumsOfUsers);
+                                    intent.putExtra("userphonenums", phoneNumsOfUsers);
+                                    intent.putExtra("userissuedates", issueDatesOfUsers);
+                                    intent.putExtra("userquantities", quantities);
+                                    intent.putExtra("useremails", emailsOfUsers);
                                     intent.putExtra("currentusername", currentUsername);
                                     intent.putExtra("currentuserregnum", currentUserRegNum);
                                     intent.putExtra("currentuseremail", currentUserEmail);

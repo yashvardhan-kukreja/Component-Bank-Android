@@ -27,11 +27,12 @@ public class Register extends AppCompatActivity {
 EditText name, regno, email, password, contact, conpassword;
 Button register;
 ProgressDialog progressDialog;
-String REGISTER_URL = "http://192.168.43.76:8000/api";
+String REGISTER_URL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        REGISTER_URL = getResources().getString(R.string.base_url) + "/create";
         progressDialog = new ProgressDialog(Register.this);
         progressDialog.setMessage("Registering you...");
         progressDialog.setCancelable(false);
@@ -55,7 +56,7 @@ String REGISTER_URL = "http://192.168.43.76:8000/api";
                         progressDialog.dismiss();
                         Toast.makeText(Register.this, "Password and confirm password doesn't match", Toast.LENGTH_LONG).show();
                     } else {
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL + "/create", new Response.Listener<String>() {
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
                                 progressDialog.dismiss();

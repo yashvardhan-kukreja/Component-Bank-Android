@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,13 +29,27 @@ public class LogInActivity extends AppCompatActivity {
 EditText email, password;
 Button login;
 TextView signup;
-String LOGIN_URL = "http://192.168.43.76:8000/api";
-String EMAIL_URL = "http://192.168.43.76:8000/api";
+String LOGIN_URL;
 ProgressDialog progressDialog;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+
+        LOGIN_URL = getResources().getString(R.string.base_url) + "/login";
         progressDialog = new ProgressDialog(LogInActivity.this);
         progressDialog.setMessage("Logging In...");
         progressDialog.setCancelable(false);
@@ -53,7 +68,7 @@ ProgressDialog progressDialog;
                 if (emailString.isEmpty() || passwordString.isEmpty()){
                     Toast.makeText(LogInActivity.this, "Please enter all the details", Toast.LENGTH_LONG).show();
                 } else {
-                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL + "/login", new Response.Listener<String>() {
+                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             progressDialog.dismiss();

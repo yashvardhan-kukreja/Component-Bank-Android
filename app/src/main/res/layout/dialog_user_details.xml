@@ -20,7 +20,7 @@
         android:id="@+id/dialogRegNum"
         android:layout_gravity="center_horizontal"
         android:text="Reg Num"
-        android:textSize="20sp"/>
+        android:textSize="18sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:id="@+id/dialogEmailId"
         android:layout_gravity="center_horizontal"
         android:text="E-mail ID"
-        android:textSize="20sp"/>
+        android:textSize="18sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,15 @@
         android:id="@+id/dialogContactNum"
         android:layout_gravity="center_horizontal"
         android:text="Contact Number"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:id="@+id/dialogQuantity"
+        android:text="Quantity: "
+        android:textSize="18sp"
+        android:layout_gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,8 +52,9 @@
         android:id="@+id/dialogIssueDate"
         android:layout_gravity="center_horizontal"
         android:text="Issued On"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:layout_marginBottom="5dp"/>
+
 
 
 

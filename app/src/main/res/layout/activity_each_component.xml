@@ -10,84 +10,94 @@
     android:paddingBottom="20dp"
     android:layout_height="match_parent"
     tools:context=".Activities.EachComponentActivity">
+
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
     <LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Component Name"
-        android:layout_marginLeft="5dp"
-        android:id="@+id/componentName"
-        android:textSize="30sp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_height="wrap_content"
-        android:text="Component Code"
-        android:id="@+id/componentCode"
-        android:textSize="20sp"/>
+        android:layout_width="match_parent"
+        android:layout_height="489dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/componentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Component Name"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/componentCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Component Code"
+            android:textSize="20sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-    <TextView
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="Available: 24"
-        android:id="@+id/componentsAvailable"/>
+
+            <TextView
+                android:id="@+id/componentsAvailable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:text="Available: 24"
+                android:textSize="25sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <TextView
+                    android:id="@+id/componentValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:textSize="25sp"
-                    android:text="Value: Rs.150"
                     android:layout_marginTop="20dp"
-                    android:id="@+id/componentValue"/>
+                    android:text="Value: Rs.150"
+                    android:textSize="25sp" />
             </LinearLayout>
         </LinearLayout>
-<android.support.v7.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_marginTop="10dp"
-    app:cardElevation="5dp"
-    app:cardCornerRadius="@dimen/cardview_default_radius"
-    app:cardUseCompatPadding="true"
-    app:contentPaddingTop="10dp"
-    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Issuers"
-            android:textSize="30sp"
-            android:layout_gravity="center"/>
-        <ListView
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listOfComponentIssuers"></ListView>
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="@dimen/cardview_default_radius"
+            app:cardElevation="5dp"
+            app:cardUseCompatPadding="true"
+            app:contentPaddingTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Issuers"
+                    android:textSize="30sp" />
+
+                <ListView
+                    android:id="@+id/listOfComponentIssuers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></ListView>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
 
     </LinearLayout>
-
-</android.support.v7.widget.CardView>
-
-
-</LinearLayout>
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
