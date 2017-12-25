@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/backg"
     tools:context="com.ieeevit.componentbank.Activities.Register">
-<TextView
+<android.support.v7.widget.CardView
+    android:layout_width="wrap_content"
+    android:layout_centerInParent="true"
+    android:padding="20dp"
+    app:contentPadding="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="20dp"
+    android:layout_height="wrap_content">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:orientation="vertical">
+    <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
     android:text="Register"
-    android:layout_marginTop="20dp"
+    android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+    android:textColor="#1B394D"
     android:textSize="30sp"/>
     <android.support.design.widget.TextInputLayout
         android:layout_width="250dp"
+        android:textColorHint="#c81a384d"
+        android:backgroundTint="#1B394D"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
+            android:backgroundTint="#1B394D"
+            android:textColor="#1B394D"
             android:layout_height="wrap_content"
             android:hint="Enter your name"
             android:id="@+id/registerName"/>
@@ -29,11 +52,15 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="250dp"
+        android:textColorHint="#c81a384d"
+        android:backgroundTint="#1B394D"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
+            android:backgroundTint="#1B394D"
+            android:textColor="#1B394D"
             android:layout_height="wrap_content"
             android:hint="Enter your reg number"
             android:id="@+id/registerRegNum"/>
@@ -43,32 +70,62 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="250dp"
         android:layout_gravity="center_horizontal"
+        android:textColorHint="#c81a384d"
+        android:backgroundTint="#1B394D"
         android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="#1B394D"
+            android:textColor="#1B394D"
             android:hint="Enter your E-mail ID"
+            android:inputType="textEmailAddress"
             android:id="@+id/registerEmail"/>
 
     </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="250dp"
+                android:textColorHint="#c81a384d"
+                android:backgroundTint="#1B394D"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#1B394D"
+                    android:textColor="#1B394D"
+                    android:inputType="numberSigned"
+                    android:hint="Enter your contact number"
+                    android:id="@+id/registerContactNum"/>
+
+            </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="250dp"
+        android:textColorHint="#c81a384d"
+        android:backgroundTint="#1B394D"
+        app:passwordToggleTint="#1B394D"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="#1B394D"
+            android:textColor="#1B394D"
             android:hint="Enter your password"
-            android:inputType="textVisiblePassword"
+            android:inputType="textPassword"
             android:id="@+id/registerPassword"/>
 
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="250dp"
+        android:textColorHint="#c81a384d"
+        android:backgroundTint="#1B394D"
+        app:passwordToggleTint="#1B394D"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
 
@@ -76,23 +133,13 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Confirm password"
-            android:inputType="textVisiblePassword"
+            android:backgroundTint="#1B394D"
+            android:textColor="#1B394D"
+            android:inputType="textPassword"
             android:id="@+id/registerConfirmPassword"/>
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:hint="Enter your contact number"
-            android:id="@+id/registerContactNum"/>
-
-    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:layout_width="wrap_content"
@@ -100,5 +147,9 @@
         android:layout_marginTop="20dp"
         android:id="@+id/registerButton"
         android:layout_gravity="center_horizontal"
-        android:text="Register"/>
-</LinearLayout>
+        android:text="Register"
+        android:background="@drawable/custom_button"/>
+        </LinearLayout>
+    </ScrollView>
+</android.support.v7.widget.CardView>
+</RelativeLayout>

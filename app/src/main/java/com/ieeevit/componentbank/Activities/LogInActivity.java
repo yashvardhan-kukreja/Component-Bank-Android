@@ -1,12 +1,16 @@
 package com.ieeevit.componentbank.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +35,8 @@ Button login;
 TextView signup;
 String LOGIN_URL;
 ProgressDialog progressDialog;
-
+CheckBox checkBox;
+int keepMeLoggedIn = 0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -49,6 +54,17 @@ ProgressDialog progressDialog;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
+        if (!(sharedPreferences.getString("email", "") == "" || sharedPreferences.getString("email", "") == null)){
+            Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
+            i.putExtra("name", sharedPreferences.getString("name", ""));
+            i.putExtra("regnum", sharedPreferences.getString("regnum", ""));
+            i.putExtra("email", sharedPreferences.getString("email", ""));
+            i.putExtra("phonenum", sharedPreferences.getString("phonenum", ""));
+            startActivity(i);
+            return;
+        }
+
         LOGIN_URL = getResources().getString(R.string.base_url) + "/login";
         progressDialog = new ProgressDialog(LogInActivity.this);
         progressDialog.setMessage("Logging In...");
@@ -57,15 +73,22 @@ ProgressDialog progressDialog;
         password = findViewById(R.id.loginPassword);
         login = findViewById(R.id.loginButton);
         signup = findViewById(R.id.signUpLink);
+        checkBox = findViewById(R.id.keepMeLoggedIn);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)
+                    keepMeLoggedIn = 1;
+                else
+                    keepMeLoggedIn = 0;
 
+            }
+        });
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-
-                final String emailString = email.getText().toString();
-                final String passwordString = password.getText().toString();
-                if (emailString.isEmpty() || passwordString.isEmpty()){
+                if (email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
                     Toast.makeText(LogInActivity.this, "Please enter all the details", Toast.LENGTH_LONG).show();
                 } else {
                     StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL, new Response.Listener<String>() {
@@ -79,7 +102,17 @@ ProgressDialog progressDialog;
                                 if (success.equals("false")){
                                     Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(LogInActivity.this, "You have successfully logged in", Toast.LENGTH_LONG).show();
+                                    if (keepMeLoggedIn == 1){
+                                        SharedPreferences sharedPreferences = getSharedPreferences("logindetails", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("email", email.getText().toString());
+                                        editor.putString("password", password.getText().toString());
+                                        editor.putString("name", jsonObject1.getString("name"));
+                                        editor.putString("regnum", jsonObject1.getString("regnum"));
+                                        editor.putString("phonenum", jsonObject1.getString("phonenum"));
+                                        editor.commit();
+                                    }
+                                    Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
                                     Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
                                     i.putExtra("name", jsonObject1.getString("name"));
                                     i.putExtra("regnum", jsonObject1.getString("regnum"));
@@ -103,8 +136,8 @@ ProgressDialog progressDialog;
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> params = new HashMap<>();
-                            params.put("username", emailString);
-                            params.put("password", passwordString);
+                            params.put("email", email.getText().toString());
+                            params.put("password", password.getText().toString());
                             return params;
                         }
                     };

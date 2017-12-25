@@ -25,11 +25,13 @@ Context context;
 List<Component> components;
 
 TextView name, code, available;
+int choice;
 
-    public ComponentsListAdapter(@NonNull Context context, List<Component> components) {
+    public ComponentsListAdapter(@NonNull Context context, List<Component> components, int choice) {
         super(context, R.layout.adapter_components_list, components);
         this.context = context;
         this.components = components;
+        this.choice = choice;
     }
     @SuppressLint("ResourceAsColor")
     @NonNull
@@ -42,7 +44,11 @@ TextView name, code, available;
 
         name.setText(components.get(position).getName()); // The name of the component
         code.setText(components.get(position).getCode()); // The code of the component
-        available.setText("Available\n"+components.get(position).getQuantity()); // The availability of that component
+        if (choice == 0){
+            available.setText("Quantity\n"+components.get(position).getQuantity()); // The availability of that component
+        } else {
+            available.setText("Available\n"+components.get(position).getQuantity()); // The availability of that component
+        }
         if (components.get(position).getQuantity().equals("0")){
             available.setTextColor(Color.parseColor("#aa0000"));
         } else {

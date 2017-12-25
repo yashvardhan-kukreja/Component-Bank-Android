@@ -1,110 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="20dp"
+    android:padding="16dp"
     android:layout_height="match_parent"
     tools:context=".Activities.EachComponentActivity">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="489dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/componentName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Component Name"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/componentCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Component Code"
-            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="489dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/componentsAvailable"
+                android:id="@+id/componentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="20dp"
-                android:text="Available: 24"
+                android:text="Component Name"
+                android:textColor="#1B394D"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/componentCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Component Code"
+                android:textColor="#1B394D"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/componentsAvailable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Available: 24"
+                    android:textColor="#1B394D"
+                    android:textSize="25sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/componentValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="20dp"
+                        android:text="Value: Rs.150"
+                        android:textColor="#1B394D"
+                        android:textSize="25sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:text="@string/issuers"
+                android:textColor="#1B394D"
                 android:textSize="25sp" />
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="@dimen/cardview_default_radius"
+                app:cardElevation="5dp"
+                app:cardUseCompatPadding="true"
+                app:contentPaddingTop="10dp">
 
-                <TextView
-                    android:id="@+id/componentValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginTop="20dp"
-                    android:text="Value: Rs.150"
-                    android:textSize="25sp" />
-            </LinearLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/noIssuers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="20dp"
+                        android:padding="10dp"
+                        android:text="No issuers of this component as of now"
+                        android:textAlignment="center"
+                        android:textColor="#D86750"
+                        android:textSize="20sp" />
+
+                    <ListView
+                        android:id="@+id/listOfComponentIssuers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></ListView>
+                </FrameLayout>
+
+            </android.support.v7.widget.CardView>
+
+
         </LinearLayout>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/issueAComponent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:cardCornerRadius="@dimen/cardview_default_radius"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true"
-            app:contentPaddingTop="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Issuers"
-                    android:textSize="30sp" />
-
-                <ListView
-                    android:id="@+id/listOfComponentIssuers"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></ListView>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-
-    </LinearLayout>
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:backgroundTint="#3f51b4"
-        android:id="@+id/issueAComponent"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add_black_24dp"
-        android:layout_gravity="right|bottom"/>
-</FrameLayout>
-</LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add_black_24dp"
+            app:backgroundTint="#1B394D"
+            app:fabSize="normal" />
+</RelativeLayout>

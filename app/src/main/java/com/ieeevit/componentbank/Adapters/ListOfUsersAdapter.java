@@ -1,6 +1,7 @@
 package com.ieeevit.componentbank.Adapters;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,9 +38,11 @@ public class ListOfUsersAdapter extends ArrayAdapter {
     List<String> issueDates;
     List<String> quantities;
     LinearLayout issuer;
-    public ListOfUsersAdapter(@NonNull Context context, @NonNull List users, List issueDates, List quantities) {
+    Activity activity;
+    public ListOfUsersAdapter(@NonNull Context context, Activity activity,@NonNull List users, List issueDates, List quantities) {
         super(context, R.layout.adapter_users_list, users);
         this.context = context;
+        this.activity = activity;
         this.users = users;
         this.issueDates = issueDates;
         this.quantities = quantities;
@@ -55,6 +58,10 @@ public class ListOfUsersAdapter extends ArrayAdapter {
         issuer = v.findViewById(R.id.issuerLayout);
         name.setText(users.get(position).getName());
         regnum.setText(users.get(position).getRegNum());
+
+        //Checking if the app has the permission to make calls and if not then, ask the user to permit the app to make calls
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, 1);
 
         issuer.setOnClickListener(new View.OnClickListener() {
             @Override

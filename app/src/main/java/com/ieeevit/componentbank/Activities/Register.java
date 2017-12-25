@@ -32,7 +32,7 @@ String REGISTER_URL;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        REGISTER_URL = getResources().getString(R.string.base_url) + "/create";
+        REGISTER_URL = getResources().getString(R.string.base_url) + "/register";
         progressDialog = new ProgressDialog(Register.this);
         progressDialog.setMessage("Registering you...");
         progressDialog.setCancelable(false);

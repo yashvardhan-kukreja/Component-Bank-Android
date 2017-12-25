@@ -10,6 +10,7 @@
         android:textAlignment="center"
         android:layout_gravity="center_horizontal"
         android:text="Name"
+        android:textColor="#1B394D"
         android:id="@+id/dialogUserName"
         android:textSize="25sp"/>
     <TextView
@@ -20,12 +21,14 @@
         android:id="@+id/dialogRegNum"
         android:layout_gravity="center_horizontal"
         android:text="Reg Num"
+        android:textColor="#1B394D"
         android:textSize="18sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:id="@+id/dialogEmailId"
+        android:textColor="#1B394D"
         android:layout_gravity="center_horizontal"
         android:text="E-mail ID"
         android:textSize="18sp"/>
@@ -33,15 +36,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:textColor="#1B394D"
         android:id="@+id/dialogContactNum"
         android:layout_gravity="center_horizontal"
         android:text="Contact Number"
+
         android:textSize="18sp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:id="@+id/dialogQuantity"
+        android:textColor="#1B394D"
         android:text="Quantity: "
         android:textSize="18sp"
         android:layout_gravity="center"/>
@@ -50,6 +56,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:id="@+id/dialogIssueDate"
+        android:textColor="#1B394D"
         android:layout_gravity="center_horizontal"
         android:text="Issued On"
         android:textSize="18sp"

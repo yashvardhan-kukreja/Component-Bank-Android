@@ -2,7 +2,9 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#1B394D</color>
     <color name="availableGreen">#00AA00</color>
     <color name="availableRed">#AA0000</color>
+    <color name="rippleColor">#D86750</color>
+    <color name="targetTitle">#1B394D</color>
 </resources>

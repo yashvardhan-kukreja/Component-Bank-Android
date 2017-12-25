@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">Component Bank</string>
-    <string name="base_url">http://192.168.43.76:8800/api</string>
+    <string name="base_url">https://componentbank.herokuapp.com/api</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="tab_text_1">Profile</string>
     <string name="tab_text_2">Components</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="registration_request"><u>Not registered yet? Sign up here</u></string>
+    <string name="issued_components"><u>Issued Components</u></string>
+    <string name="issuers"><u>Issuers</u></string>
 </resources>

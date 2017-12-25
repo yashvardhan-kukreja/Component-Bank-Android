@@ -12,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Component Name"
+        android:textColor="#1B394D"
         android:id="@+id/componentsListComponentName"
         android:textSize="20sp"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="wrap_content"
+        android:textColor="#1B394D"
         android:id="@+id/componentsListComponentId"
         android:layout_height="wrap_content"
         android:text="Unique code"/>

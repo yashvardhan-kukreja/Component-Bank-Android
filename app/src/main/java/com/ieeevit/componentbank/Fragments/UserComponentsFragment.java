@@ -93,7 +93,7 @@ public class UserComponentsFragment extends Fragment {
                         for (int position=0;position<jsonArray.length();position++){
                             Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("code"), jsonArray.getJSONObject(position).getString("quantity"));
                             componentList.add(component);
-                            components.setAdapter((new ComponentsListAdapter(context, componentList)));
+                            components.setAdapter((new ComponentsListAdapter(context, componentList, 1)));
                             if (position == (jsonArray.length() - 1)){
                                 progressDialog.dismiss();
                             }
@@ -111,8 +111,10 @@ public class UserComponentsFragment extends Fragment {
                                     issueDatesOfUsers.clear();
                                     emailsOfUsers.clear();
                                     JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("issuedBy");
-                                    for (int j=0;j<jsonArray1.length();j++){
+                                    for (int j=jsonArray1.length()-1;j>-1;j--){
                                         if (jsonArray1.length()>1 && j==0)
+                                            continue;
+                                        else if (jsonArray1.getJSONObject(j).getString("returned").equals("true"))
                                             continue;
                                         namesOfUsers.add(jsonArray1.getJSONObject(j).getString("name"));
                                         regNumsOfUsers.add(jsonArray1.getJSONObject(j).getString("regnum"));
@@ -162,8 +164,6 @@ public class UserComponentsFragment extends Fragment {
         Volley.newRequestQueue(context).add(stringRequest);
 
         // End of the request
-
-
 
         return v;
     }

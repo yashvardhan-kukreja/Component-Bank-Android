@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Good morning, Yashvardhan Kukreja"
+    android:text="Hello"
     android:textSize="30sp"
+    android:textColor="#1B394D"
     android:id="@+id/profilePageGreeting"
     />
 
-
     <TextView
         android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/profileRegNum"
-        android:textSize="20sp"
-        android:text="Reg. Number: 16BCE0320"/>
-
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Components issued: 30"
-        android:id="@+id/profileComponentsIssued"/>
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:textColor="#1B394D"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/issued_components"/>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
         android:elevation="@dimen/cardview_default_radius"
+        app:cardElevation="5dp"
         android:layout_height="wrap_content">
-<LinearLayout
+<FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-        <TextView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textAlignment="center"
-            android:layout_margin="10dp"
-            android:layout_gravity="center_horizontal"
-            android:text="Issued Components"/>
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="No components issued as of now"
+        android:padding="10dp"
+        android:layout_margin="20dp"
+        android:textColor="#D86750"
+        android:textSize="20sp"
+        android:id="@+id/noComponentsIssued"
+        android:textAlignment="center"/>
+
         <ListView
             android:layout_width="match_parent"
+            android:layout_marginBottom="35dp"
             android:layout_height="wrap_content"
             android:id="@+id/profileIssuedComponentsList"></ListView>
-</LinearLayout>
+</FrameLayout>
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

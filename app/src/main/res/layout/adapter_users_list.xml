@@ -13,6 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#1B394D"
             android:text="Name of issuer"
             android:id="@+id/nameOfIssuer"
             android:textSize="20sp"/>
@@ -20,6 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#1B394D"
             android:text="Reg Num of Issuer"
             android:id="@+id/regNumOfIssuer"/>
 
@@ -33,6 +35,7 @@
         android:id="@+id/userCallButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:backgroundTint="#1B394D"
         android:background="@drawable/ic_call_black_24dp"/>
     </LinearLayout>
 

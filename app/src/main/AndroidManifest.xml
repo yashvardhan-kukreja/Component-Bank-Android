@@ -12,15 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.LogInActivity">
+        <activity android:name=".Activities.LogInActivity"
+            android:theme="@style/AppTheme2">
 
         </activity>
-        <activity android:name=".Activities.Register" />
+        <activity android:name=".Activities.Register"
+            android:theme="@style/AppTheme2"/>
         <activity
             android:name=".Activities.TabbedActivity"
             android:label="@string/title_activity_tabbed"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.EachComponentActivity" />
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.EachComponentActivity"
+            android:label="Component Details"
+            android:theme="@style/AppTheme3"/>
         <activity android:name=".Activities.SplashScreen"
             android:theme="@style/AppTheme2">
             <intent-filter>
