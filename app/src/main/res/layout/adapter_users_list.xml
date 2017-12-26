@@ -3,6 +3,7 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:padding="16dp"
     android:id="@+id/issuerLayout"
+    android:background="#515151"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -13,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#1B394D"
+            android:textColor="#ffffff"
             android:text="Name of issuer"
             android:id="@+id/nameOfIssuer"
             android:textSize="20sp"/>
@@ -21,23 +22,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#1B394D"
+            android:textColor="#ffffff"
             android:text="Reg Num of Issuer"
             android:id="@+id/regNumOfIssuer"/>
 
     </LinearLayout>
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <Button
-        android:layout_gravity="right"
-        android:id="@+id/userCallButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:backgroundTint="#1B394D"
-        android:background="@drawable/ic_call_black_24dp"/>
-    </LinearLayout>
+        android:layout_height="46dp">
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/userCallButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ic_call_black_24dp"
+                android:backgroundTint="#ffffff" />
+        </LinearLayout>
+    </RelativeLayout>
 
 
 

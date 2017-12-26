@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -65,7 +66,7 @@ public class TabbedActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimehomepage", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = sharedPreferences2.edit();
         if (sharedPreferences2.getString("firsttime", "").equals("") || sharedPreferences2.getString("firsttime", "").equals(null) || sharedPreferences2.getString("firsttime", "").equals("false")){
-            TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(logout, "Logout!", "Touch here for logging out").outerCircleColor(R.color.rippleColor).outerCircleAlpha(0.9f).transparentTarget(true));
+            TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(logout, "Logout!", "Touch here for logging out").outerCircleColor(R.color.rippleColor).transparentTarget(true));
             editor2.putString("firsttime", "true");
             editor2.commit();
         }
@@ -78,6 +79,7 @@ public class TabbedActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Toast.makeText(TabbedActivity.this, "Aloha!!", Toast.LENGTH_SHORT).show();
                 startActivity((new Intent(TabbedActivity.this, LogInActivity.class)));
             }
         });

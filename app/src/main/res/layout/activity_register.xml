@@ -5,140 +5,128 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/backg"
+    android:background="#ffffff"
     tools:context="com.ieeevit.componentbank.Activities.Register">
-<android.support.v7.widget.CardView
-    android:layout_width="wrap_content"
-    android:layout_centerInParent="true"
-    android:padding="20dp"
-    app:contentPadding="10dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="20dp"
-    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mapblack"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:layout_gravity="center"
             android:orientation="vertical">
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:text="Register"
-    android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-    android:textColor="#1B394D"
-    android:textSize="30sp"/>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:textColorHint="#c81a384d"
-        android:backgroundTint="#1B394D"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
-
-        <EditText
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="100dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/logoblack"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Become a member"
+                android:layout_marginBottom="15dp"
+                android:textSize="25sp"/>
+            <EditText
             android:layout_width="250dp"
-            android:backgroundTint="#1B394D"
-            android:textColor="#1B394D"
+            android:background="@drawable/custom_text_fields"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:textColorHint="#696969"
+            android:textColor="#000000"
+            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:hint="Enter your name"
             android:id="@+id/registerName"/>
 
-    </android.support.design.widget.TextInputLayout>
-
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:textColorHint="#c81a384d"
-        android:backgroundTint="#1B394D"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
-            android:backgroundTint="#1B394D"
-            android:textColor="#1B394D"
+            android:background="@drawable/custom_text_fields"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:textColorHint="#696969"
+            android:textColor="#000000"
             android:layout_height="wrap_content"
-            android:hint="Enter your reg number"
+            android:hint="Enter your Reg. Number"
             android:id="@+id/registerRegNum"/>
 
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:layout_gravity="center_horizontal"
-        android:textColorHint="#c81a384d"
-        android:backgroundTint="#1B394D"
-        android:layout_height="wrap_content">
-
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1B394D"
-            android:textColor="#1B394D"
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/custom_text_fields"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:textColorHint="#696969"
+            android:textColor="#000000"
             android:hint="Enter your E-mail ID"
             android:inputType="textEmailAddress"
             android:id="@+id/registerEmail"/>
 
-    </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="250dp"
-                android:textColorHint="#c81a384d"
-                android:backgroundTint="#1B394D"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content">
-
                 <EditText
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#1B394D"
-                    android:textColor="#1B394D"
-                    android:inputType="numberSigned"
+                    android:background="@drawable/custom_text_fields"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"
+                    android:textColorHint="#696969"
+                    android:textColor="#000000"
+                    android:inputType="phone"
                     android:hint="Enter your contact number"
                     android:id="@+id/registerContactNum"/>
-
-            </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:textColorHint="#c81a384d"
-        android:backgroundTint="#1B394D"
-        app:passwordToggleTint="#1B394D"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1B394D"
-            android:textColor="#1B394D"
+            android:background="@drawable/custom_text_fields"
+            android:textColor="#000000"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:textColorHint="#696969"
+            android:layout_gravity="center"
             android:hint="Enter your password"
             android:inputType="textPassword"
             android:id="@+id/registerPassword"/>
 
-    </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="250dp"
-        android:textColorHint="#c81a384d"
-        android:backgroundTint="#1B394D"
-        app:passwordToggleTint="#1B394D"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Confirm password"
-            android:backgroundTint="#1B394D"
-            android:textColor="#1B394D"
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#696969"
+            android:background="@drawable/custom_text_fields"
+            android:padding="10dp"
+            android:layout_gravity="center"
             android:inputType="textPassword"
             android:id="@+id/registerConfirmPassword"/>
-
-    </android.support.design.widget.TextInputLayout>
 
 
     <Button
@@ -148,8 +136,10 @@
         android:id="@+id/registerButton"
         android:layout_gravity="center_horizontal"
         android:text="Register"
-        android:background="@drawable/custom_button"/>
+        android:textColor="#ffffff"
+        android:background="@drawable/login_button"/>
         </LinearLayout>
+        </FrameLayout>
     </ScrollView>
-</android.support.v7.widget.CardView>
+    </LinearLayout>
 </RelativeLayout>

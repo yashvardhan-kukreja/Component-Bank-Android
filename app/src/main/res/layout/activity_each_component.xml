@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:padding="16dp"
+    android:background="@drawable/splash_gradient"
     android:layout_height="match_parent"
     tools:context=".Activities.EachComponentActivity">
 
@@ -19,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text="Component Name"
-                android:textColor="#1B394D"
+                android:textColor="#ffffff"
                 android:textSize="30sp" />
 
             <TextView
@@ -28,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text="Component Code"
-                android:textColor="#1B394D"
+                android:textColor="#ffffff"
                 android:textSize="20sp" />
 
             <LinearLayout
@@ -42,7 +43,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="20dp"
                     android:text="Available: 24"
-                    android:textColor="#1B394D"
+                    android:textColor="#ffffff"
                     android:textSize="25sp" />
 
                 <LinearLayout
@@ -57,7 +58,7 @@
                         android:layout_gravity="right"
                         android:layout_marginTop="20dp"
                         android:text="Value: Rs.150"
-                        android:textColor="#1B394D"
+                        android:textColor="#ffffff"
                         android:textSize="25sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -66,20 +67,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="15dp"
-                android:text="@string/issuers"
-                android:textColor="#1B394D"
+                android:text="Issuers"
+                android:layout_marginLeft="5dp"
+                android:textColor="#ffffff"
                 android:textSize="25sp" />
+
+            <View
+                android:layout_width="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="20dp"
+                android:background="#ffffff"/>
+
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 app:cardCornerRadius="@dimen/cardview_default_radius"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true"
-                app:contentPaddingTop="10dp">
+                >
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -94,12 +103,13 @@
                         android:padding="10dp"
                         android:text="No issuers of this component as of now"
                         android:textAlignment="center"
-                        android:textColor="#D86750"
+                        android:textColor="#000000"
                         android:textSize="20sp" />
 
                     <ListView
                         android:id="@+id/listOfComponentIssuers"
                         android:layout_width="match_parent"
+                        android:background="#515151"
                         android:layout_height="wrap_content"></ListView>
                 </FrameLayout>
 
@@ -116,6 +126,6 @@
             android:layout_alignParentEnd="true"
             android:layout_margin="16dp"
             android:src="@drawable/ic_add_black_24dp"
-            app:backgroundTint="#1B394D"
+            android:backgroundTint="#000000"
             app:fabSize="normal" />
 </RelativeLayout>

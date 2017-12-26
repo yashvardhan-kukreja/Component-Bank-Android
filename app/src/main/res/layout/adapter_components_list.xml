@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#515151"
     android:id="@+id/componentListItem"
     android:padding="16dp">
     <LinearLayout
@@ -12,16 +13,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Component Name"
-        android:textColor="#1B394D"
+        android:textColor="#ffffff"
         android:id="@+id/componentsListComponentName"
         android:textSize="20sp"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="wrap_content"
-        android:textColor="#1B394D"
+        android:textColor="#ffffff"
         android:id="@+id/componentsListComponentId"
         android:layout_height="wrap_content"
         android:text="Unique code"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#aaffffff"
+        android:id="@+id/componentsListComponentDate"
+        android:layout_height="wrap_content"
+        android:text="03-08-2018"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +37,7 @@
         android:layout_height="match_parent">
     <TextView
         android:layout_gravity="right"
-        android:textColor="#00aa00"
+        android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"

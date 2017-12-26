@@ -143,7 +143,7 @@ int count = 0;
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimeissuepage", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = sharedPreferences2.edit();
         if (sharedPreferences2.getString("firsttime", "").equals("") || sharedPreferences2.getString("firsttime", "").equals(null) || sharedPreferences2.getString("firsttime", "").equals("false")){
-            TapTargetView.showFor(EachComponentActivity.this, TapTarget.forView(fab, "Issue a component!", "If the components aren't available, then you can borrow them from any of the issuers :)").outerCircleColor(R.color.rippleColor).outerCircleAlpha(0.9f).transparentTarget(true));
+            TapTargetView.showFor(EachComponentActivity.this, TapTarget.forView(fab, "Issue a component!", "If the components aren't available, then you can borrow them from any of the issuers by calling them :)").outerCircleColor(R.color.rippleColor).transparentTarget(true));
             editor2.putString("firsttime", "true");
             editor2.commit();
         }

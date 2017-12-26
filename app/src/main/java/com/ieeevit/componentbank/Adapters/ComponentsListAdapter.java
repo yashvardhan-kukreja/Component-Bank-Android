@@ -23,14 +23,16 @@ import java.util.List;
 public class ComponentsListAdapter extends ArrayAdapter {
 Context context;
 List<Component> components;
+List<String> dates;
 
-TextView name, code, available;
+TextView name, code, available, date;
 int choice;
 
-    public ComponentsListAdapter(@NonNull Context context, List<Component> components, int choice) {
+    public ComponentsListAdapter(@NonNull Context context, List<Component> components, List<String> dates,int choice) {
         super(context, R.layout.adapter_components_list, components);
         this.context = context;
         this.components = components;
+        this.dates = dates;
         this.choice = choice;
     }
     @SuppressLint("ResourceAsColor")
@@ -41,20 +43,27 @@ int choice;
         name = v.findViewById(R.id.componentsListComponentName);
         code = v.findViewById(R.id.componentsListComponentId);
         available = v.findViewById(R.id.componentsListComponentAvailability);
+        date = v.findViewById(R.id.componentsListComponentDate);
 
         name.setText(components.get(position).getName()); // The name of the component
         code.setText(components.get(position).getCode()); // The code of the component
+        date.setVisibility(View.GONE);
         if (choice == 0){
+            date.setVisibility(View.VISIBLE);
             available.setText("Quantity\n"+components.get(position).getQuantity()); // The availability of that component
+            date.setText(dates.get(position).toString());
         } else {
+            date.setVisibility(View.GONE);
             available.setText("Available\n"+components.get(position).getQuantity()); // The availability of that component
         }
+        available.setTextColor(Color.parseColor("#ffffff"));
+        /*
         if (components.get(position).getQuantity().equals("0")){
             available.setTextColor(Color.parseColor("#aa0000"));
         } else {
             available.setTextColor(Color.parseColor("#00aa00"));
         }
-
+        */
         return v;
     }
 }

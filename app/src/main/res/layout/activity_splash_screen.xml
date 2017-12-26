@@ -4,18 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     android:layout_height="match_parent"
     tools:context=".Activities.SplashScreen">
 
-    <TextView
-        android:id="@+id/splashTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="#000000"
+        />
+    <ImageView
+        android:layout_width="225dp"
+        android:layout_height="225dp"
+        android:src="@drawable/logowhite"
+        android:id="@+id/splashImage"
         android:layout_centerInParent="true"
-        android:fontFamily="cursive"
-        android:text="Component Bank"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="40sp" />
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:id="@+id/ieeeSplash"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ieee"
+        android:layout_marginBottom="10dp"/>
+
 </RelativeLayout>

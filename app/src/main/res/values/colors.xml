@@ -5,6 +5,6 @@
     <color name="colorAccent">#1B394D</color>
     <color name="availableGreen">#00AA00</color>
     <color name="availableRed">#AA0000</color>
-    <color name="rippleColor">#D86750</color>
+    <color name="rippleColor">#2d2d2d</color>
     <color name="targetTitle">#1B394D</color>
 </resources>

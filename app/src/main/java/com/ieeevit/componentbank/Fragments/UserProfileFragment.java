@@ -43,6 +43,7 @@ public class UserProfileFragment extends Fragment {
     TextView name, regnum, componentsIssued;
     ListView componentsList;
     List<Component> components;
+    List<String> dates;
     String CURRENTLY_ISSUED_COMPONENTS;
     ProgressDialog progressDialog;
     TextView noComponentsIssued;
@@ -59,9 +60,10 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user_profile_page, container, false);
         components = new ArrayList<>();
+        dates = new ArrayList<>();
         name = v.findViewById(R.id.profilePageGreeting);
         noComponentsIssued = v.findViewById(R.id.noComponentsIssued);
-        //regnum = v.findViewById(R.id.profileRegNum);
+        regnum = v.findViewById(R.id.profileRegNum);
         //componentsIssued = v.findViewById(R.id.profileComponentsIssued);
         CURRENTLY_ISSUED_COMPONENTS = getResources().getString(R.string.base_url) + "/currentlyIssuedComponents";
         progressDialog = new ProgressDialog(context);
@@ -70,8 +72,8 @@ public class UserProfileFragment extends Fragment {
         progressDialog.show();
         componentsList = v.findViewById(R.id.profileIssuedComponentsList);
         componentsList.setVisibility(View.GONE);
-        name.setText("Hello,\n" + currentUsername);
-//        regnum.setText("Reg. Number: " + currentUserRegNum);
+        name.setText(currentUsername);
+        regnum.setText(currentUserRegNum);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, CURRENTLY_ISSUED_COMPONENTS, new Response.Listener<String>() {
             @Override
@@ -81,11 +83,11 @@ public class UserProfileFragment extends Fragment {
                     JSONObject jsonObject =  new JSONObject(s);
                     String success = jsonObject.getString("success");
                     String message = jsonObject.getString("message");
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                     if (success.equals("true")){
-//                        componentsIssued.setText("Components Issued: " + jsonObject.getString("number"));
+                        //componentsIssued.setText("Components Issued: " + jsonObject.getString("number"));
                         JSONArray jsonArray = jsonObject.getJSONArray("componentsIssued");
                         components.clear();
+                        dates.clear();
                         if (jsonArray.length() == 1){
                             componentsList.setVisibility(View.GONE);
                             noComponentsIssued.setVisibility(View.VISIBLE);
@@ -98,12 +100,13 @@ public class UserProfileFragment extends Fragment {
                                 else if (jsonArray.getJSONObject(i).getString("returned").equals("true"))
                                     continue;
                                 components.add((new Component(jsonArray.getJSONObject(i).getString("name"), jsonArray.getJSONObject(i).getString("code"), jsonArray.getJSONObject(i).getString("quantity"))));
-
-                                componentsList.setAdapter((new ComponentsListAdapter(context, components, 0)));
+                                dates.add(jsonArray.getJSONObject(i).getString("date"));
+                                componentsList.setAdapter((new ComponentsListAdapter(context, components, dates,0)));
 
                             }
                         }
-
+                    } else {
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     progressDialog.dismiss();

@@ -87,10 +87,10 @@ int keepMeLoggedIn = 0;
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.show();
                 if (email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
                     Toast.makeText(LogInActivity.this, "Please enter all the details", Toast.LENGTH_LONG).show();
                 } else {
+                    progressDialog.show();
                     StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -112,7 +112,7 @@ int keepMeLoggedIn = 0;
                                         editor.putString("phonenum", jsonObject1.getString("phonenum"));
                                         editor.commit();
                                     }
-                                    Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LogInActivity.this, "Aloha!!", Toast.LENGTH_LONG).show();
                                     Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
                                     i.putExtra("name", jsonObject1.getString("name"));
                                     i.putExtra("regnum", jsonObject1.getString("regnum"));

@@ -93,7 +93,7 @@ public class UserComponentsFragment extends Fragment {
                         for (int position=0;position<jsonArray.length();position++){
                             Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("code"), jsonArray.getJSONObject(position).getString("quantity"));
                             componentList.add(component);
-                            components.setAdapter((new ComponentsListAdapter(context, componentList, 1)));
+                            components.setAdapter((new ComponentsListAdapter(context, componentList, null,1))); // Setting the list of dates as null because there is no need of dates
                             if (position == (jsonArray.length() - 1)){
                                 progressDialog.dismiss();
                             }

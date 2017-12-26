@@ -4,23 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backg"
+    android:background="#ffffff"
     android:orientation="vertical"
     tools:context="com.ieeevit.componentbank.Activities.LogInActivity">
-    <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
-        android:padding="20dp"
-        app:contentPadding="10dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="20dp"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="16dp"
+            android:layout_centerVertical="true"
             android:orientation="vertical">
         <ScrollView
             android:layout_width="match_parent"
@@ -29,59 +21,71 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Log in"
-                android:textColor="#1B394D"
-                android:textSize="30sp" />
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="250dp"
-                android:textColorHint="#c81a384d"
-                android:backgroundTint="#1B394D"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="260dp"
+                        android:src="@drawable/mapblack"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:src="@drawable/logoblack"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_gravity="center_horizontal"
+                            android:textSize="30sp"
+                            android:text="Welcome"
+                            />
+                    </LinearLayout>
+                </FrameLayout>
 
                 <EditText
                     android:id="@+id/loginEmail"
                     android:layout_width="250dp"
-                    android:backgroundTint="#1B394D"
-                    android:textColor="#1B394D"
+                    android:textColor="#000000"
                     android:inputType="textEmailAddress"
                     android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textColorHint="#696969"
+                    android:background="@drawable/custom_text_fields"
                     android:layout_gravity="center_horizontal"
                     android:hint="Enter your E-mail" />
-            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                app:passwordToggleEnabled="true"
-                android:textColorHint="#c81a384d"
-                android:backgroundTint="#1B394D"
-                app:passwordToggleTint="#1B394D"
-                android:layout_gravity="center_horizontal">
 
                 <EditText
                     android:id="@+id/loginPassword"
+                    android:textAlignment="center"
+                    android:layout_marginTop="20dp"
                     android:layout_width="250dp"
-                    android:backgroundTint="#1B394D"
-                    android:textColor="#1B394D"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#000000"
+                    android:background="@drawable/custom_text_fields"
+                    android:padding="10dp"
+                    android:textColorHint="#696969"
                     android:inputType="textPassword"
                     android:layout_height="wrap_content"
                     android:hint="Enter the Password" />
-            </android.support.design.widget.TextInputLayout>
 
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:backgroundTint="#1B394D"
-                android:buttonTint="#1B394D"
-                android:textColor="#1B394D"
+                android:backgroundTint="#000000"
+                android:buttonTint="#000000"
+                android:textColor="#000000"
                 android:id="@+id/keepMeLoggedIn"
                 android:layout_marginTop="10dp"
                 android:text="Keep me logged in"/>
@@ -93,7 +97,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:padding="10dp"
-                android:background="@drawable/custom_button"
+                android:background="@drawable/login_button"
+                android:textColor="#ffffff"
                 android:text="LogIn" />
 
             <TextView
@@ -103,9 +108,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
                 android:text="@string/registration_request"
-                android:textColor="#1B394D" />
+                android:textColor="#000000" />
+
             </LinearLayout>
         </ScrollView>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
 </RelativeLayout>

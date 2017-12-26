@@ -2,20 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/splash_gradient">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Issue the component"
         android:textSize="28sp"
-        android:textColor="#000000"/>
+        android:textColor="#ffffff"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Number of components"
         android:textSize="20sp"
+        android:textColor="#ffffff"
+
         android:layout_marginTop="10dp"
         android:layout_marginBottom="30dp"/>
     <LinearLayout
@@ -29,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_remove_circle_outline_black_24dp"
-            android:background="#1B394D"
+            android:background="#000000"
             android:paddingTop="10dp"
             android:id="@+id/minusButton"
             android:paddingBottom="10dp"
@@ -45,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="40sp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:id="@+id/countText"
                 android:layout_gravity="center"
                 android:textAlignment="center"/>
@@ -53,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_circle_outline_black_24dp"
-            android:background="#1B394D"
+            android:background="#000000"
             android:id="@+id/plusButton"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
@@ -71,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Yes"
-            android:textColor="@color/colorAccent"
+            android:textColor="#ffffff"
             android:background="#00000000"
             android:id="@+id/yesConfirmation"/>
 
@@ -80,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00000000"
-            android:textColor="@color/colorAccent"
+            android:textColor="#ffffff"
             android:text="Cancel"
             android:id="@+id/cancelConfirmation"/>
 
