@@ -5,26 +5,25 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_gradient"
     android:fitsSystemWindows="true"
-    tools:context=".Activities.TabbedActivity">
-    <FrameLayout
+    tools:context=".Activities.AdminTabbedActivity">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+        android:layout_width="50dp"
+        android:layout_gravity="right"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/optionsmenulogoutadmin"/>
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <View
-            android:layout_width="50dp"
-            android:layout_gravity="right"
-            android:layout_height="?attr/actionBarSize"
-            android:id="@+id/optionsmenulogout"/>
-<android.support.design.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:background="@drawable/splash_gradient"
-    android:layout_height="match_parent">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
-        android:background="#000000"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -32,34 +31,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
-            android:background="#000000"
+            android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="Techloop+">
-            <!--<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Techloop+"
-                    android:layout_gravity="center"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="?attr/actionBarSize">
-            <View
-                android:layout_width="60dp"
-                android:layout_gravity="right"
-                android:layout_height="wrap_content"
-                android:id="@+id/optionsmenulogout"/>
-                </LinearLayout>
-            </LinearLayout>-->
+            app:title="Admin ">
+
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
@@ -71,14 +47,18 @@
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_text_1" />
+                android:text="Requests" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_text_2" />
-
+                android:text="Issuers" />
+            <android.support.design.widget.TabItem
+                android:id="@+id/tabItem3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Components" />
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
@@ -88,16 +68,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-</android.support.design.widget.CoordinatorLayout>
-    </FrameLayout>
+
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addComponentFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:id="@+id/historyFAB"
-        android:backgroundTint="#000000"
-        android:src="@drawable/ic_event_available_black_24dp"
-        app:fabSize="normal" />
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:fabSize="normal"
+        app:backgroundTint="#000000"
+        android:src="@drawable/ic_add_black_24dp" />
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>
 </RelativeLayout>

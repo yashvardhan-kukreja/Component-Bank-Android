@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +12,8 @@
         android:text="Name"
         android:textColor="#1B394D"
         android:id="@+id/dialogUserName"
-        android:textSize="25sp"/>
+        android:fontFamily="@font/dinpro"
+        android:textSize="20sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Reg Num"
         android:textColor="#1B394D"
-        android:textSize="18sp"/>
+        android:textSize="15sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
         android:textColor="#1B394D"
         android:layout_gravity="center_horizontal"
         android:text="E-mail ID"
-        android:textSize="18sp"/>
+        android:textSize="15sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,7 +42,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Contact Number"
 
-        android:textSize="18sp" />
+        android:textSize="15sp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,7 +50,7 @@
         android:id="@+id/dialogQuantity"
         android:textColor="#1B394D"
         android:text="Quantity: "
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:layout_gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
@@ -59,11 +60,6 @@
         android:textColor="#1B394D"
         android:layout_gravity="center_horizontal"
         android:text="Issued On"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:layout_marginBottom="5dp"/>
-
-
-
-
-
 </LinearLayout>

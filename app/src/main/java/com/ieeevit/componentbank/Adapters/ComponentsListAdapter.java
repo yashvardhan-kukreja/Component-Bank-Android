@@ -41,29 +41,23 @@ int choice;
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.adapter_components_list, parent, false);
         name = v.findViewById(R.id.componentsListComponentName);
-        code = v.findViewById(R.id.componentsListComponentId);
+        //code = v.findViewById(R.id.componentsListComponentId);
         available = v.findViewById(R.id.componentsListComponentAvailability);
         date = v.findViewById(R.id.componentsListComponentDate);
 
         name.setText(components.get(position).getName()); // The name of the component
-        code.setText(components.get(position).getCode()); // The code of the component
-        date.setVisibility(View.GONE);
+        //code.setText(components.get(position).getCode()); // The code of the component
+        date.setVisibility(View.INVISIBLE);
         if (choice == 0){
             date.setVisibility(View.VISIBLE);
             available.setText("Quantity\n"+components.get(position).getQuantity()); // The availability of that component
             date.setText(dates.get(position).toString());
         } else {
-            date.setVisibility(View.GONE);
-            available.setText("Available\n"+components.get(position).getQuantity()); // The availability of that component
+            date.setVisibility(View.INVISIBLE);
+            available.setText("Available\n"+components.get(position).getQuantity());
+            name.setTextSize(20.0f);// The availability of that component
         }
         available.setTextColor(Color.parseColor("#ffffff"));
-        /*
-        if (components.get(position).getQuantity().equals("0")){
-            available.setTextColor(Color.parseColor("#aa0000"));
-        } else {
-            available.setTextColor(Color.parseColor("#00aa00"));
-        }
-        */
         return v;
     }
 }

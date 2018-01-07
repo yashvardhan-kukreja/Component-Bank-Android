@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@drawable/splash_gradient">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your space to be"
-        android:textAlignment="textStart"
-        android:textColor="#ffffff"
-        android:paddingLeft="16dp"
-        android:fontFamily="@font/dinpro"
-        android:layout_marginTop="10dp"
-        android:textSize="30sp"/>
 
     <TextView
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="innovative!"
+        android:text="Have the issuers returned the components?"
+        android:id="@+id/adminIssuersMainTitle"
         android:textAlignment="textStart"
         android:textColor="#ffffff"
         android:fontFamily="@font/dinpro"
@@ -35,11 +27,11 @@
         android:background="#ffffff"/>
 
     <ListView
-    android:layout_marginTop="10dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#515151"
-    android:id="@+id/componentsList">
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:layout_marginBottom="65dp"
+        android:id="@+id/issuersListAdmin"/>
 
-</ListView>
 </LinearLayout>

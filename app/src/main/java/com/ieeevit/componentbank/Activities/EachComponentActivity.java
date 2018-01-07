@@ -1,5 +1,6 @@
 package com.ieeevit.componentbank.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,29 +26,29 @@ import com.ieeevit.componentbank.Adapters.ListOfUsersAdapter;
 import com.ieeevit.componentbank.Classes.User;
 import com.ieeevit.componentbank.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EachComponentActivity extends AppCompatActivity {
-TextView name, code, availability, value, countText, noIssuers;
+TextView name, availability, value, countText, noIssuers;
+ProgressDialog progressDialog;
+String token;
 ListView listOfIssuers;
-String nameStr, codeStr, availStr, valStr; //Component Details
+String nameStr, availStr, valStr, id; //Component Details
 List<User> users;
 FloatingActionButton fab;
-String ISSUE_COMPONENT_URL;
+String REQUEST_COMPONENT_URL, GET_ISSUERS_URL;
 ImageView plus, minus;
-EditText numberOfComponentsToBeIssued;
 Button yesConfirmation, cancelConfirmation;
-ArrayList<String> names, regnums, phonenums, issuedDates, emails, quantities; //Users associated with those components;
+ArrayList<String>issuedDates, quantities; //Users associated with those components;
 AlertDialog confirmationDialog;
-String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
+String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numreq, numissue;
 int count = 0;
     @Override
     public void onBackPressed() {
@@ -56,11 +56,17 @@ int count = 0;
         currentUserEmail = getIntent().getExtras().getString("currentuseremail");
         currentUserRegNum = getIntent().getExtras().getString("currentuserregnum");
         currentUserPhoneNum = getIntent().getExtras().getString("currentuserphonenum");
+        token = getIntent().getExtras().getString("token");
+        numreq = getIntent().getExtras().getString("numrequested");
+        numissue = getIntent().getExtras().getString("numissued");
         Intent i = new Intent(EachComponentActivity.this, TabbedActivity.class);
         i.putExtra("name", currentUsername);
         i.putExtra("email", currentUserEmail);
         i.putExtra("regnum", currentUserRegNum);
         i.putExtra("phonenum", currentUserPhoneNum);
+        i.putExtra("numissued", numissue);
+        i.putExtra("numrequested", numreq);
+        i.putExtra("token", token);
         startActivity(i);
     }
 
@@ -69,48 +75,104 @@ int count = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_each_component);
         users = new ArrayList<>();
-        names = new ArrayList<>();
-        regnums = new ArrayList<>();
-        phonenums = new ArrayList<>();
         issuedDates = new ArrayList<>();
-        emails = new ArrayList<>();
         quantities =  new ArrayList<>();
 
-        ISSUE_COMPONENT_URL = getResources().getString(R.string.base_url) + "/issueComponent";
+        REQUEST_COMPONENT_URL = getResources().getString(R.string.base_url) + "/requestComponent";
+        GET_ISSUERS_URL = getResources().getString(R.string.base_url) + "/getIssuers";
 
         //Fetching the details of the component from the previous activity
-        nameStr = getIntent().getExtras().getString("name");
-        codeStr = getIntent().getExtras().getString("code");
-        availStr = getIntent().getExtras().getString("quantity");
-        valStr = getIntent().getExtras().getString("value");
+        id = getIntent().getExtras().getString("componentId");
+
 
         //Fetching the details of the current user from the previous activity
         currentUsername = getIntent().getExtras().getString("currentusername");
         currentUserEmail = getIntent().getExtras().getString("currentuseremail");
         currentUserRegNum = getIntent().getExtras().getString("currentuserregnum");
         currentUserPhoneNum = getIntent().getExtras().getString("currentuserphonenum");
-
-
-        //Fetching list of the all the users with their details which have currently issued this component
-        names = getIntent().getExtras().getStringArrayList("usernames");
-        regnums = getIntent().getExtras().getStringArrayList("userregnums");
-        phonenums = getIntent().getExtras().getStringArrayList("userphonenums");
-        issuedDates = getIntent().getExtras().getStringArrayList("userissuedates");
-        emails = getIntent().getExtras().getStringArrayList("useremails");
-        quantities = getIntent().getExtras().getStringArrayList("userquantities");
-
-        for (int i=0;i<names.size();i++){
-            users.add((new User(names.get(i).toString(), regnums.get(i).toString(), emails.get(i).toString(), phonenums.get(i).toString())));
-        }
+        numreq = getIntent().getExtras().getString("numrequested");
+        numissue = getIntent().getExtras().getString("numissued");
+        token = getIntent().getExtras().getString("token");
 
         name = findViewById(R.id.componentName);
-        code = findViewById(R.id.componentCode);
         availability = findViewById(R.id.componentsAvailable);
         value = findViewById(R.id.componentValue);
         listOfIssuers = findViewById(R.id.listOfComponentIssuers);
         fab = findViewById(R.id.issueAComponent);
         noIssuers = findViewById(R.id.noIssuers);
         listOfIssuers.setVisibility(View.GONE);
+        progressDialog = new ProgressDialog(EachComponentActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        //Request to get all the issuers of the current component with their details
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_ISSUERS_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+                    String success = jsonObject.getString("success");
+                    String message = jsonObject.getString("message");
+                    if (success.equals("false")){
+                        Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    //Fetching the details of the component
+                    nameStr = jsonObject.getJSONObject("component").getString("name");
+                    availStr = jsonObject.getJSONObject("component").getString("quantity");
+                    valStr = jsonObject.getJSONObject("component").getString("value");
+                    //Setting the details of the component
+                    name.setText(nameStr);
+                    availability.setText("Available: " + availStr);
+                    value.setText("Value: Rs." + valStr);
+
+                    users.clear();
+                    issuedDates.clear();
+                    quantities.clear();
+                    JSONArray jsonArray = jsonObject.getJSONArray("transactions");
+                    for (int i=0;i<jsonArray.length();i++){
+                        users.add(new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno")));
+                        StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
+                        String date = dateBuilder.toString().split("T")[0].split("-")[2] + "-" + dateBuilder.toString().split("T")[0].split("-")[1] + "-" + dateBuilder.toString().split("T")[0].split("-")[0];
+                        String time = dateBuilder.toString().split("T")[1].substring(0, 8);
+                        issuedDates.add(date + "  " + time);
+                        quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
+                    }
+                    if (users.size() == 0){
+                        listOfIssuers.setVisibility(View.GONE);
+                        noIssuers.setVisibility(View.VISIBLE);
+                    } else {
+                        listOfIssuers.setVisibility(View.VISIBLE);
+                        noIssuers.setVisibility(View.GONE);
+                        listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, EachComponentActivity.this,users, issuedDates, quantities)));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(EachComponentActivity.this, "An error occured!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                progressDialog.dismiss();
+                volleyError.printStackTrace();
+                Toast.makeText(EachComponentActivity.this, "An error occured!!", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id", id);
+                params.put("token", token);
+                return params;
+            }
+        };
+        Volley.newRequestQueue(EachComponentActivity.this).add(stringRequest);
+        //End of the request
+
+
 
         //Building and handling the final alert dialog for issuing the component
         final AlertDialog.Builder builder = new AlertDialog.Builder(EachComponentActivity.this);
@@ -143,7 +205,7 @@ int count = 0;
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimeissuepage", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = sharedPreferences2.edit();
         if (sharedPreferences2.getString("firsttime", "").equals("") || sharedPreferences2.getString("firsttime", "").equals(null) || sharedPreferences2.getString("firsttime", "").equals("false")){
-            TapTargetView.showFor(EachComponentActivity.this, TapTarget.forView(fab, "Issue a component!", "If the components aren't available, then you can borrow them from any of the issuers by calling them :)").outerCircleColor(R.color.rippleColor).transparentTarget(true));
+            TapTargetView.showFor(EachComponentActivity.this, TapTarget.forView(fab, "Request a component!", "If the components aren't available, then you can request them from any of the issuers by calling them just by one touch :)").outerCircleColor(R.color.rippleColor).transparentTarget(true));
             editor2.putString("firsttime", "true");
             editor2.commit();
         }
@@ -166,8 +228,8 @@ int count = 0;
                             return;
                         }
 
-                        //Request for issuing the component
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, ISSUE_COMPONENT_URL, new Response.Listener<String>() {
+                        //Request for requesting to issue the component
+                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, REQUEST_COMPONENT_URL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
                                 try {
@@ -176,13 +238,15 @@ int count = 0;
                                     String message = jsonObject.getString("message");
                                     Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_LONG).show();
                                     if (success.equals("true")){
-                                        availStr = Integer.toString(Integer.parseInt(availStr) - count);
-                                        availability.setText("Available: " + availStr);
+                                        //availStr = Integer.toString(Integer.parseInt(availStr) - count);
+                                        //availability.setText("Available: " + availStr);
                                         Intent i = new Intent(EachComponentActivity.this, TabbedActivity.class);
                                         i.putExtra("name", currentUsername);
                                         i.putExtra("email", currentUserEmail);
                                         i.putExtra("regnum", currentUserRegNum);
                                         i.putExtra("phonenum", currentUserPhoneNum);
+                                        i.putExtra("numissued", numissue);
+                                        i.putExtra("token", token);
                                         startActivity(i);
                                     }
                                     confirmationDialog.dismiss();
@@ -203,18 +267,15 @@ int count = 0;
                             @Override
                             protected Map<String, String> getParams() throws AuthFailureError {
                                 Map<String, String> params = new HashMap<>();
-                                params.put("componentcode", codeStr);
-                                params.put("number", Integer.toString(count));
-                                params.put("issuedbyname", currentUsername);
-                                params.put("issuedbyregnum", currentUserRegNum);
-                                params.put("issuedbyphonenum", currentUserPhoneNum);
-                                params.put("issuedbyemail", currentUserEmail);
-                                params.put("issuedondate", (new SimpleDateFormat("dd-MM-yyyy").format(new Date())));
+                                params.put("id", id);
+                                params.put("quantity", Integer.toString(count));
+                                params.put("email", currentUserEmail);
+                                params.put("token", token);
                                 return params;
                             }
                         };
-                        Volley.newRequestQueue(EachComponentActivity.this).add(stringRequest);
-                        //End of the request for issuing the component
+                        Volley.newRequestQueue(EachComponentActivity.this).add(stringRequest1);
+                        //End of the request
                     }
                 });
 
@@ -226,20 +287,5 @@ int count = 0;
                 });
             }
         });
-
-        name.setText(nameStr);
-        code.setText(codeStr);
-        availability.setText("Available: " + availStr);
-        value.setText("Value: Rs." + valStr);
-        if (users.size() <= 1){
-            listOfIssuers.setVisibility(View.GONE);
-            noIssuers.setVisibility(View.VISIBLE);
-        } else {
-            listOfIssuers.setVisibility(View.VISIBLE);
-            noIssuers.setVisibility(View.GONE);
-            listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, EachComponentActivity.this,users, issuedDates, quantities)));
-        }
-
-
     }
 }

@@ -4,20 +4,22 @@
     android:orientation="vertical"
     android:background="@drawable/splash_gradient"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="10dp">
 
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Profile"
-    android:textSize="30sp"
+    android:fontFamily="@font/dinpro"
+    android:textSize="28sp"
     android:textStyle="normal"
     android:textColor="#ffffff"
     />
     <View
         android:layout_width="50dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_height="1dp"
         android:background="#ffffff"/>
 
@@ -51,8 +53,8 @@
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
                     android:src="@drawable/logowhite"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -61,39 +63,59 @@
                     android:layout_gravity="center"
                     android:textColor="#ffffff"
                     android:layout_marginLeft="10dp"
-                    android:textSize="25sp"/>
+                    android:textSize="22sp"/>
             </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:text=""
                 android:id="@+id/profileRegNum"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:textColor="#ffffff"
                 android:layout_marginLeft="20dp"
                 />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text=""
+                android:id="@+id/profileCompIssued"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="20dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text=""
+                android:id="@+id/profileCompRequested"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="20dp"
+                />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
                 android:orientation="horizontal">
                 <LinearLayout
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="#ffffff"
                         android:text=""
                         android:id="@+id/profilePageGreeting"/>
                 </LinearLayout>
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ieee"/>
             </LinearLayout>
@@ -105,14 +127,15 @@
         android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:textSize="24sp"
+        android:fontFamily="@font/dinpro"
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:text="Issued Components"/>
 
     <View
         android:layout_width="50dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"
         android:background="#ffffff"/>
@@ -121,6 +144,8 @@
         android:layout_width="match_parent"
         android:elevation="@dimen/cardview_default_radius"
         app:cardElevation="5dp"
+        android:layout_marginBottom="45dp"
+        android:backgroundTint="#515151"
         android:layout_height="wrap_content">
 <FrameLayout
     android:layout_width="match_parent"
@@ -139,10 +164,10 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_marginBottom="35dp"
             android:layout_height="wrap_content"
             android:background="#515151"
             android:id="@+id/profileIssuedComponentsList"></ListView>
+
 </FrameLayout>
     </android.support.v7.widget.CardView>
 

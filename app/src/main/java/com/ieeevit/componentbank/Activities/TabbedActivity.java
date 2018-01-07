@@ -11,8 +11,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -25,8 +26,10 @@ public class TabbedActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
-    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
-    FloatingActionButton logout;
+    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numrequested, numissued;
+    View logout;
+    String token;
+    FloatingActionButton history;
 
     @Override
     public void onBackPressed() {
@@ -36,7 +39,6 @@ public class TabbedActivity extends AppCompatActivity {
             i.addCategory(Intent.CATEGORY_HOME);
             startActivity(i);
         }
-
     }
 
     @Override
@@ -48,6 +50,10 @@ public class TabbedActivity extends AppCompatActivity {
         currentUserEmail = getIntent().getExtras().getString("email");
         currentUserRegNum = getIntent().getExtras().getString("regnum");
         currentUserPhoneNum = getIntent().getExtras().getString("phonenum");
+        numrequested = getIntent().getExtras().getString("numrequested");
+        numissued = getIntent().getExtras().getString("numissued");
+
+        token = getIntent().getExtras().getString("token");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,31 +66,50 @@ public class TabbedActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-        logout = findViewById(R.id.logoutFAB);
+        logout = findViewById(R.id.optionsmenulogout);
+        history = findViewById(R.id.historyFAB);
+        history.setVisibility(View.GONE);
 
         // When the app is run for the first time, a target view will pop up displaying the description about how to logout using a Tap Target View
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimehomepage", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = sharedPreferences2.edit();
         if (sharedPreferences2.getString("firsttime", "").equals("") || sharedPreferences2.getString("firsttime", "").equals(null) || sharedPreferences2.getString("firsttime", "").equals("false")){
-            TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(logout, "Logout!", "Touch here for logging out").outerCircleColor(R.color.rippleColor).transparentTarget(true));
+            TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(logout, "Logout!", "Touch here for logging out").outerCircleColor(R.color.rippleColor).transparentTarget(true), new TapTargetView.Listener(){
+
+
+                @Override
+                public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                    super.onTargetDismissed(view, userInitiated);
+                    //TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(history, "History!", "List of components you have issued and returned successfully").outerCircleColor(R.color.rippleColor).transparentTarget(true));
+                }
+            });
             editor2.putString("firsttime", "true");
             editor2.commit();
         }
 
-        //Listener for FAB for logging out
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.commit();
-                Toast.makeText(TabbedActivity.this, "Aloha!!", Toast.LENGTH_SHORT).show();
-                startActivity((new Intent(TabbedActivity.this, LogInActivity.class)));
-            }
-        });
+
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tabbed, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.logoutaction) {
+            SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.commit();
+            startActivity((new Intent(TabbedActivity.this, LogInActivity.class)));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -96,10 +121,10 @@ public class TabbedActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch(position){
                 case 0:
-                    UserProfileFragment userProfileFragment = new UserProfileFragment(TabbedActivity.this, currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum);
+                    UserProfileFragment userProfileFragment = new UserProfileFragment(TabbedActivity.this, currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numrequested, numissued, token);
                     return userProfileFragment;
                 case 1:
-                    UserComponentsFragment userComponentsFragment = new UserComponentsFragment(TabbedActivity.this, currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum);
+                    UserComponentsFragment userComponentsFragment = new UserComponentsFragment(TabbedActivity.this, currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numrequested, numissued, token);
                     return userComponentsFragment;
             }
             return null;

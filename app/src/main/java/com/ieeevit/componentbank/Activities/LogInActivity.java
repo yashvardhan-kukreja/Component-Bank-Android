@@ -55,20 +55,28 @@ int keepMeLoggedIn = 0;
         setContentView(R.layout.activity_log_in);
 
         SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
-        if (!(sharedPreferences.getString("email", "") == "" || sharedPreferences.getString("email", "") == null)){
+        if (!(sharedPreferences.getString("token", "") == "" || sharedPreferences.getString("token", "") == null)){
             Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
             i.putExtra("name", sharedPreferences.getString("name", ""));
             i.putExtra("regnum", sharedPreferences.getString("regnum", ""));
             i.putExtra("email", sharedPreferences.getString("email", ""));
             i.putExtra("phonenum", sharedPreferences.getString("phonenum", ""));
-            startActivity(i);
+            i.putExtra("token", sharedPreferences.getString("token", ""));
+            i.putExtra("numissued", sharedPreferences.getString("numissued", ""));
+            if (sharedPreferences.getString("isAdmin","").equals("0"))
+                startActivity(i);
+            else {
+                Intent i2 = new Intent(LogInActivity.this, AdminTabbedActivity.class);
+                i2.putExtra("token", sharedPreferences.getString("token", ""));
+                startActivity(i2);
+            }
             return;
         }
 
-        LOGIN_URL = getResources().getString(R.string.base_url) + "/login";
+        LOGIN_URL = getResources().getString(R.string.base_url_auth) + "/login";
         progressDialog = new ProgressDialog(LogInActivity.this);
         progressDialog.setMessage("Logging In...");
-        progressDialog.setCancelable(false);
+        //progressDialog.setCancelable(false);
         email = findViewById(R.id.loginEmail);
         password = findViewById(R.id.loginPassword);
         login = findViewById(R.id.loginButton);
@@ -106,19 +114,31 @@ int keepMeLoggedIn = 0;
                                         SharedPreferences sharedPreferences = getSharedPreferences("logindetails", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
                                         editor.putString("email", email.getText().toString());
-                                        editor.putString("password", password.getText().toString());
                                         editor.putString("name", jsonObject1.getString("name"));
-                                        editor.putString("regnum", jsonObject1.getString("regnum"));
-                                        editor.putString("phonenum", jsonObject1.getString("phonenum"));
+                                        editor.putString("regnum", jsonObject1.getString("regno"));
+                                        editor.putString("phonenum", jsonObject1.getString("phoneno"));
+                                        editor.putString("numissued", jsonObject1.getString("issuedComponents"));
+                                        editor.putString("token", jsonObject1.getString("token"));
+                                        editor.putString("isAdmin", jsonObject1.getString("isAdmin"));
                                         editor.commit();
                                     }
-                                    Toast.makeText(LogInActivity.this, "Aloha!!", Toast.LENGTH_LONG).show();
-                                    Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
-                                    i.putExtra("name", jsonObject1.getString("name"));
-                                    i.putExtra("regnum", jsonObject1.getString("regnum"));
-                                    i.putExtra("email", jsonObject1.getString("email"));
-                                    i.putExtra("phonenum", jsonObject1.getString("phonenum"));
-                                    startActivity(i);
+                                    if (jsonObject1.getString("isAdmin").equals("0")){
+                                        Toast.makeText(LogInActivity.this, "Aloha!!", Toast.LENGTH_LONG).show();
+                                        Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
+                                        i.putExtra("name", jsonObject1.getString("name"));
+                                        i.putExtra("regnum", jsonObject1.getString("regno"));
+                                        i.putExtra("email", jsonObject1.getString("email"));
+                                        i.putExtra("phonenum", jsonObject1.getString("phoneno"));
+                                        i.putExtra("numissued", jsonObject1.getString("issuedComponents"));
+                                        i.putExtra("numrequested", jsonObject1.getString("requestedComponents"));
+                                        i.putExtra("token", jsonObject1.getString("token"));
+                                        startActivity(i);
+                                    } else {
+                                        Intent i = new Intent(LogInActivity.this, AdminTabbedActivity.class);
+                                        i.putExtra("token", jsonObject1.getString("token"));
+                                        Toast.makeText(LogInActivity.this, "Aloha Admin!!", Toast.LENGTH_LONG).show();
+                                        startActivity(i);
+                                    }
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

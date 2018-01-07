@@ -34,7 +34,7 @@ String REGISTER_URL;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        REGISTER_URL = getResources().getString(R.string.base_url) + "/register";
+        REGISTER_URL = getResources().getString(R.string.base_url_auth) + "/register";
         progressDialog = new ProgressDialog(Register.this);
         progressDialog.setMessage("Registering you...");
         progressDialog.setCancelable(false);
@@ -109,7 +109,7 @@ String REGISTER_URL;
                             protected Map<String, String> getParams() throws AuthFailureError {
                                 Map<String, String> params = new HashMap<>();
                                 params.put("name", name.getText().toString());
-                                params.put("username", regno.getText().toString());
+                                params.put("regno", regno.getText().toString());
                                 params.put("password", password.getText().toString());
                                 params.put("email", email.getText().toString());
                                 params.put("phoneno", contact.getText().toString());

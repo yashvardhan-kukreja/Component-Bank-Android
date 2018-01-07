@@ -6,6 +6,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#2d2d2d</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="android:statusBarColor">#000000</item>
 
     </style>
@@ -15,6 +17,7 @@
 
         <item name="colorPrimary">#000000</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="colorAccent">#2d2d2d</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">#000000</item>
@@ -24,13 +27,16 @@
     <style name="AppTheme3" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#000000</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#2d2d2d</item>
         <item name="android:statusBarColor">#000000</item>
 
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="colorPrimary">#000000</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#ffffff</item>
         <item name="android:windowTranslucentStatus">true</item>
@@ -41,6 +47,7 @@
 
         <item name="colorPrimary">#000000</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="colorAccent">#2d2d2d</item>
         <item name="android:statusBarColor">#000000</item>
     </style>
@@ -50,6 +57,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#000000</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fontFamily">@font/gotham</item>
         <item name="colorAccent">#2d2d2d</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">#000000</item>

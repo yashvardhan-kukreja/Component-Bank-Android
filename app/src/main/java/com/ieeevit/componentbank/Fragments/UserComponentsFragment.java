@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -29,7 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -43,21 +46,18 @@ public class UserComponentsFragment extends Fragment {
     List<Component> componentList;
     ProgressDialog progressDialog;
     String COMPONENT_LIST_GET_URL;
-    ArrayList<String> namesOfUsers = new ArrayList<>();
-    ArrayList<String> regNumsOfUsers = new ArrayList<>();
-    ArrayList<String> phoneNumsOfUsers = new ArrayList<>();
-    ArrayList<String> issueDatesOfUsers = new ArrayList<>();
-    ArrayList<String> emailsOfUsers = new ArrayList<>();
-    ArrayList<String> quantities = new ArrayList<>();
-    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
+    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numreq, numissue, token;
 
     @SuppressLint("ValidFragment")
-    public UserComponentsFragment(Context context, String currentUsername, String currentUserEmail, String currentUserRegNum, String currentUserPhoneNum) {
+    public UserComponentsFragment(Context context, String currentUsername, String currentUserEmail, String currentUserRegNum, String currentUserPhoneNum, String numreq, String numissue, String token) {
         this.context = context;
         this.currentUsername = currentUsername;
         this.currentUserEmail = currentUserEmail;
         this.currentUserRegNum = currentUserRegNum;
         this.currentUserPhoneNum = currentUserPhoneNum;
+        this.numreq = numreq;
+        this.numissue = numissue;
+        this.token = token;
     }
 
     @Nullable
@@ -70,10 +70,10 @@ public class UserComponentsFragment extends Fragment {
         progressDialog.setCancelable(false);
         progressDialog.show();
         componentList = new ArrayList<>();
-        COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url) + "/getcomponents";
-        //Request for getting the list of components with their respective details
+        COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url) + "/getAllComponents";
+        //Request for getting the list of all components
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, COMPONENT_LIST_GET_URL, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, COMPONENT_LIST_GET_URL, new Response.Listener<String>() {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onResponse(String s) {
@@ -91,7 +91,7 @@ public class UserComponentsFragment extends Fragment {
                         componentList.clear();
                         componentList = new ArrayList<>();
                         for (int position=0;position<jsonArray.length();position++){
-                            Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("code"), jsonArray.getJSONObject(position).getString("quantity"));
+                            Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("value"), jsonArray.getJSONObject(position).getString("quantity"), jsonArray.getJSONObject(position).getString("_id"));
                             componentList.add(component);
                             components.setAdapter((new ComponentsListAdapter(context, componentList, null,1))); // Setting the list of dates as null because there is no need of dates
                             if (position == (jsonArray.length() - 1)){
@@ -105,39 +105,16 @@ public class UserComponentsFragment extends Fragment {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                 try {
-                                    namesOfUsers.clear();
-                                    regNumsOfUsers.clear();
-                                    phoneNumsOfUsers.clear();
-                                    issueDatesOfUsers.clear();
-                                    emailsOfUsers.clear();
-                                    JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("issuedBy");
-                                    for (int j=jsonArray1.length()-1;j>-1;j--){
-                                        if (jsonArray1.length()>1 && j==0)
-                                            continue;
-                                        else if (jsonArray1.getJSONObject(j).getString("returned").equals("true"))
-                                            continue;
-                                        namesOfUsers.add(jsonArray1.getJSONObject(j).getString("name"));
-                                        regNumsOfUsers.add(jsonArray1.getJSONObject(j).getString("regnum"));
-                                        phoneNumsOfUsers.add(jsonArray1.getJSONObject(j).getString("phonenum"));
-                                        issueDatesOfUsers.add(jsonArray1.getJSONObject(j).getString("issuedOn"));
-                                        emailsOfUsers.add(jsonArray1.getJSONObject(j).getString("email"));
-                                        quantities.add(jsonArray1.getJSONObject(j).getString("quantity"));
-                                    }
+                                    String id  = jsonArray.getJSONObject(i).getString("_id");
                                     Intent intent = new Intent(context, EachComponentActivity.class);
-                                    intent.putExtra("name", jsonArray.getJSONObject(i).getString("name")); // Sending the name of the component to the EachComponentActivity.java with the key "name"
-                                    intent.putExtra("code", jsonArray.getJSONObject(i).getString("code")); // Sending the unique code of the component to the EachComponentActivity.java with the key "code"
-                                    intent.putExtra("quantity", jsonArray.getJSONObject(i).getString("quantity")); // Sending the availability of the component to the EachComponentActivity.java with the key "quantity"
-                                    intent.putExtra("value", jsonArray.getJSONObject(i).getString("value"));
-                                    intent.putExtra("usernames", namesOfUsers);
-                                    intent.putExtra("userregnums", regNumsOfUsers);
-                                    intent.putExtra("userphonenums", phoneNumsOfUsers);
-                                    intent.putExtra("userissuedates", issueDatesOfUsers);
-                                    intent.putExtra("userquantities", quantities);
-                                    intent.putExtra("useremails", emailsOfUsers);
+                                    intent.putExtra("componentId", id);
                                     intent.putExtra("currentusername", currentUsername);
                                     intent.putExtra("currentuserregnum", currentUserRegNum);
                                     intent.putExtra("currentuseremail", currentUserEmail);
                                     intent.putExtra("currentuserphonenum", currentUserPhoneNum);
+                                    intent.putExtra("numissued", numissue);
+                                    intent.putExtra("numrequested", numreq);
+                                    intent.putExtra("token", token);
                                     startActivity(intent);
                                 } catch (JSONException e) {
                                     Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
@@ -159,7 +136,14 @@ public class UserComponentsFragment extends Fragment {
                 volleyError.printStackTrace();
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return params;
+            }
+        };
 
         Volley.newRequestQueue(context).add(stringRequest);
 

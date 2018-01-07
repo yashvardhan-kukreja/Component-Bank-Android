@@ -5,22 +5,27 @@ package com.ieeevit.componentbank.Classes;
  */
 
 public class Component {
-    String name, code, quantity;
-    public Component(String name, String code, String quantity) {
+    String name, value, quantity, id;
+    public Component(String name, String value, String quantity, String id) {
         this.name = name;
-        this.code = code;
+        this.value = value;
         this.quantity = quantity;
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getCode() {
-        return code;
+    public String getValue() {
+        return value;
     }
 
     public String getQuantity() {
         return quantity;
+    }
+
+    public String getId() {
+        return id;
     }
 }

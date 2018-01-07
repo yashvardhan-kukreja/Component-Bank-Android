@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="#515151"
     android:id="@+id/componentListItem"
-    android:padding="16dp">
+    android:padding="14dp">
     <LinearLayout
         android:layout_width="wrap_content"
         android:orientation="vertical"
@@ -15,36 +15,32 @@
         android:text="Component Name"
         android:textColor="#ffffff"
         android:id="@+id/componentsListComponentName"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="wrap_content"
-        android:textColor="#ffffff"
-        android:id="@+id/componentsListComponentId"
-        android:layout_height="wrap_content"
-        android:text="Unique code"/>
-    <TextView
-        android:layout_width="wrap_content"
         android:textColor="#aaffffff"
+        android:textSize="13sp"
         android:id="@+id/componentsListComponentDate"
         android:layout_height="wrap_content"
         android:text="03-08-2018"/>
     </LinearLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_gravity="right"
         android:orientation="vertical"
         android:layout_height="match_parent">
-    <TextView
-        android:layout_gravity="right"
-        android:textColor="#ffffff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:id="@+id/componentsListComponentAvailability"
-        android:text="Available
+
+        <TextView
+            android:id="@+id/componentsListComponentAvailability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Available
 20"
-        android:textAlignment="center"
-        />
-    </LinearLayout>
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+    </RelativeLayout>
 </LinearLayout>
