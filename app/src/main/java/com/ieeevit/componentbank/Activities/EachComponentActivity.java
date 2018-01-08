@@ -133,11 +133,45 @@ int count = 0;
                     quantities.clear();
                     JSONArray jsonArray = jsonObject.getJSONArray("transactions");
                     for (int i=0;i<jsonArray.length();i++){
-                        users.add(new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno")));
+                        //Syncing time and date with Indian time and date
                         StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
-                        String date = dateBuilder.toString().split("T")[0].split("-")[2] + "-" + dateBuilder.toString().split("T")[0].split("-")[1] + "-" + dateBuilder.toString().split("T")[0].split("-")[0];
                         String time = dateBuilder.toString().split("T")[1].substring(0, 8);
-                        issuedDates.add(date + "  " + time);
+                        String[] timeArr = time.split(":");
+                        String seconds = timeArr[2];
+                        String dd = dateBuilder.toString().split("T")[0].split("-")[2];
+                        String mm = dateBuilder.toString().split("T")[0].split("-")[1];
+                        String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
+                        int hour = Integer.parseInt(timeArr[0]);
+                        int minutes = Integer.parseInt(timeArr[1]);
+                        minutes += 55;
+                        hour+=5;
+                        if (minutes>=60){
+                            hour += 1;
+                            minutes -= 60;
+                        }
+                        if (hour >= 24){
+                            hour -= 24;
+                            dd = Integer.toString(Integer.parseInt(dd) + 1);
+                            if (Integer.parseInt(dd) < 10)
+                                dd = "0" + dd;
+                        }
+                        String minutesString;
+                        if (minutes < 10)
+                            minutesString = "0" + Integer.toString(minutes);
+                        else
+                            minutesString = Integer.toString(minutes);
+
+                        String hoursString;
+                        if (hour < 10)
+                            hoursString = "0" + Integer.toString(hour);
+                        else
+                            hoursString = Integer.toString(hour);
+                        String finalTime = hoursString + ":" + minutesString + ":" + seconds;
+                        String finalDate = dd + "-" + mm + "-" + yyyy;
+
+                        //Moving on
+                        issuedDates.add(finalDate + "  " + finalTime);
+                        users.add(new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno")));
                         quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
                     }
                     if (users.size() == 0){

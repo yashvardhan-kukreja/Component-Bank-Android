@@ -56,6 +56,8 @@ public class AdminComponentsFragment extends Fragment {
     Button dialogYes, dialogCancel;
     ImageView minus, plus;
     String compId;
+    AlertDialog.Builder builder;
+    AlertDialog dialog;
 
     public AdminComponentsFragment(Context context, String token) {
         this.context = context;
@@ -73,7 +75,7 @@ public class AdminComponentsFragment extends Fragment {
         progressDialog.show();
         progressDialog.dismiss();
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_component_confirmation, null, false);
         TextView title = dialogView.findViewById(R.id.dialogTitle);
         title.setText("Add more such components");
@@ -153,7 +155,8 @@ public class AdminComponentsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     compId  = componentList.get(i).getId();
-                    final AlertDialog dialog = builder.create();
+                    dialog = builder.create();
+                    dialog.setCancelable(false);
                     dialog.show();
                     plus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -190,6 +193,7 @@ public class AdminComponentsFragment extends Fragment {
                                         }
                                         Intent intent = new Intent(context, AdminTabbedActivity.class);
                                         intent.putExtra("token", token);
+                                        intent.putExtra("pagerItem",  "2");
                                         startActivity(intent);
                                     } catch (JSONException e) {
                                         Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
@@ -221,6 +225,11 @@ public class AdminComponentsFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
+                            Intent i2 = new Intent(context, AdminTabbedActivity.class);
+                            i2.putExtra("token", token);
+                            i2.putExtra("pagerItem", "2");
+                            startActivity(i2);
+                            return;
                         }
                     });
             }

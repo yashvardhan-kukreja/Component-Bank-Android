@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,6 +45,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
     FloatingActionButton addComponent;
     String REG_COMPONENT_URL;
     String token;
+    String currentPagerItem;
     @Override
     public void onBackPressed() {
         SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
@@ -68,6 +68,8 @@ public class AdminTabbedActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        currentPagerItem = getIntent().getExtras().getString("pagerItem");
+        mViewPager.setCurrentItem(Integer.parseInt(currentPagerItem));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -79,7 +81,6 @@ public class AdminTabbedActivity extends AppCompatActivity {
 
         token = getIntent().getExtras().getString("token");
         View mainLayout = findViewById(android.R.id.content);
-        Snackbar.make(mainLayout, "Click on the components to add more such components", Snackbar.LENGTH_LONG).show();
 
         // When the app is run for the first time, a target view will pop up displaying the description about how to logout using a Tap Target View
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimehomepageadmin", MODE_PRIVATE);

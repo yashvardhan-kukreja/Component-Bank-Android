@@ -136,6 +136,7 @@ int keepMeLoggedIn = 0;
                                     } else {
                                         Intent i = new Intent(LogInActivity.this, AdminTabbedActivity.class);
                                         i.putExtra("token", jsonObject1.getString("token"));
+                                        i.putExtra("pagerItem",  "0");
                                         Toast.makeText(LogInActivity.this, "Aloha Admin!!", Toast.LENGTH_LONG).show();
                                         startActivity(i);
                                     }

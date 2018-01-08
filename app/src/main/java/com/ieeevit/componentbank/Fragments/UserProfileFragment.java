@@ -103,11 +103,45 @@ public class UserProfileFragment extends Fragment {
                             int sum = 0;
                             for (int i=jsonArray.length()-1; i>-1;i--){
                                 sum += Integer.parseInt(jsonArray.getJSONObject(i).getString("quantity"));
-                                components.add((new Component(jsonArray.getJSONObject(i).getString("componentName"), null, jsonArray.getJSONObject(i).getString("quantity"), jsonArray.getJSONObject(i).getString("componentId"))));
+                                //Syncing time and date with Indian time and date
                                 StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
-                                String date = dateBuilder.toString().split("T")[0].split("-")[2] + "-" + dateBuilder.toString().split("T")[0].split("-")[1] + "-" + dateBuilder.toString().split("T")[0].split("-")[0];
                                 String time = dateBuilder.toString().split("T")[1].substring(0, 8);
-                                dates.add(date + "  " + time);
+                                String[] timeArr = time.split(":");
+                                String seconds = timeArr[2];
+                                String dd = dateBuilder.toString().split("T")[0].split("-")[2];
+                                String mm = dateBuilder.toString().split("T")[0].split("-")[1];
+                                String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
+                                int hour = Integer.parseInt(timeArr[0]);
+                                int minutes = Integer.parseInt(timeArr[1]);
+                                minutes += 55;
+                                hour+=5;
+                                if (minutes>=60){
+                                    hour += 1;
+                                    minutes -= 60;
+                                }
+                                if (hour >= 24){
+                                    hour -= 24;
+                                    dd = Integer.toString(Integer.parseInt(dd) + 1);
+                                    if (Integer.parseInt(dd) < 10)
+                                        dd = "0" + dd;
+                                }
+                                String minutesString;
+                                if (minutes < 10)
+                                    minutesString = "0" + Integer.toString(minutes);
+                                else
+                                    minutesString = Integer.toString(minutes);
+
+                                String hoursString;
+                                if (hour < 10)
+                                    hoursString = "0" + Integer.toString(hour);
+                                else
+                                    hoursString = Integer.toString(hour);
+                                String finalTime = hoursString + ":" + minutesString + ":" + seconds;
+                                String finalDate = dd + "-" + mm + "-" + yyyy;
+
+                                //Moving on
+                                components.add((new Component(jsonArray.getJSONObject(i).getString("componentName"), null, jsonArray.getJSONObject(i).getString("quantity"), jsonArray.getJSONObject(i).getString("componentId"))));
+                                dates.add(finalDate + "  " + finalTime);
                                 componentsList.setAdapter((new ComponentsListAdapter(context, components, dates,0)));
                             }
                             componentsIssued.setText("Components Issued: " + Integer.toString(sum));

@@ -123,15 +123,50 @@ public class AdminIssuersFragment extends Fragment {
                     else {
 
                         for (int i=(jsonArray.length()-1);i>-1;i--){
+                            //Syncing time and date with Indian time and date
                             StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
-                            String date = dateBuilder.toString().split("T")[0].split("-")[2] + "-" + dateBuilder.toString().split("T")[0].split("-")[1] + "-" + dateBuilder.toString().split("T")[0].split("-")[0];
                             String time = dateBuilder.toString().split("T")[1].substring(0, 8);
-                            dates.add(date + "  " + time);
+                            String[] timeArr = time.split(":");
+                            String seconds = timeArr[2];
+                            String dd = dateBuilder.toString().split("T")[0].split("-")[2];
+                            String mm = dateBuilder.toString().split("T")[0].split("-")[1];
+                            String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
+                            int hour = Integer.parseInt(timeArr[0]);
+                            int minutes = Integer.parseInt(timeArr[1]);
+                            minutes += 55;
+                            hour+=5;
+                            if (minutes>=60){
+                                hour += 1;
+                                minutes -= 60;
+                            }
+                            if (hour >= 24){
+                                hour -= 24;
+                                dd = Integer.toString(Integer.parseInt(dd) + 1);
+                                if (Integer.parseInt(dd) < 10)
+                                    dd = "0" + dd;
+                            }
+                            String minutesString;
+                            if (minutes < 10)
+                                minutesString = "0" + Integer.toString(minutes);
+                            else
+                                minutesString = Integer.toString(minutes);
+
+                            String hoursString;
+                            if (hour < 10)
+                                hoursString = "0" + Integer.toString(hour);
+                            else
+                                hoursString = Integer.toString(hour);
+                            String finalTime = hoursString + ":" + minutesString + ":" + seconds;
+                            String finalDate = dd + "-" + mm + "-" + yyyy;
+
+                            //Moving on
+                            dates.add(finalDate + "  " + finalTime);
                             quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
                             compNames.add(jsonArray.getJSONObject(i).getString("componentName"));
+
+
+
                             transactionIds.add(jsonArray.getJSONObject(i).getString("_id"));
-                            System.out.println(quantities);
-                            System.out.println(transactionIds);
                             users.add((new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno"))));
                             issuers.setAdapter((new ListOfIssuersAdapter(context, users, dates, quantities, compNames, choice)));
                             if (i == 0 )
@@ -197,6 +232,7 @@ public class AdminIssuersFragment extends Fragment {
                                         dialog.dismiss();
                                         Intent i = new Intent(context, AdminTabbedActivity.class);
                                         i.putExtra("token", token);
+                                        i.putExtra("pagerItem",  "1");
                                         getContext().startActivity(i);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -250,6 +286,7 @@ public class AdminIssuersFragment extends Fragment {
                                         dialog.dismiss();
                                         Intent i = new Intent(context, AdminTabbedActivity.class);
                                         i.putExtra("token", token);
+                                        i.putExtra("pagerItem",  "0");
                                         getContext().startActivity(i);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -292,6 +329,7 @@ public class AdminIssuersFragment extends Fragment {
                                         }
                                         Intent i = new Intent(context, AdminTabbedActivity.class);
                                         i.putExtra("token", token);
+                                        i.putExtra("pagerItem",  "0");
                                         getContext().startActivity(i);
                                     } catch (JSONException e) {
                                         Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
