@@ -30,6 +30,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ieeevit.componentbank.Fragments.AdminComponentsFragment;
 import com.ieeevit.componentbank.Fragments.AdminIssuersFragment;
+import com.ieeevit.componentbank.Fragments.UnauthUsersFragment;
 import com.ieeevit.componentbank.R;
 
 import org.json.JSONException;
@@ -80,7 +81,6 @@ public class AdminTabbedActivity extends AppCompatActivity {
         addComponent = findViewById(R.id.addComponentFAB);
 
         token = getIntent().getExtras().getString("token");
-        View mainLayout = findViewById(android.R.id.content);
 
         // When the app is run for the first time, a target view will pop up displaying the description about how to logout using a Tap Target View
         SharedPreferences sharedPreferences2 = getSharedPreferences("firsttimehomepageadmin", MODE_PRIVATE);
@@ -125,6 +125,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
                                         compRegDialog.dismiss();
                                         Intent i = new Intent(AdminTabbedActivity.this, AdminTabbedActivity.class);
                                         i.putExtra("token", token);
+                                        i.putExtra("pagerItem", "0");
                                         startActivity(i);
                                         return;
                                     }
@@ -165,7 +166,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_tabbed, menu);
+        getMenuInflater().inflate(R.menu.menu_admin_tabbed, menu);
         return true;
     }
 
@@ -173,7 +174,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.logoutaction) {
+        if (id == R.id.logoutactionadmin) {
             SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
@@ -204,13 +205,16 @@ public class AdminTabbedActivity extends AppCompatActivity {
                 case 2:
                     AdminComponentsFragment adminComponentsFragment = new AdminComponentsFragment(AdminTabbedActivity.this, token);
                     return adminComponentsFragment;
+                case 3:
+                    UnauthUsersFragment unauthUsersFragment = new UnauthUsersFragment(AdminTabbedActivity.this, token);
+                    return unauthUsersFragment;
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
     }
 }

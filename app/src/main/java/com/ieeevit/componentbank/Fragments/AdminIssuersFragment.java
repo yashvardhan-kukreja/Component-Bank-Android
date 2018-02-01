@@ -133,7 +133,7 @@ public class AdminIssuersFragment extends Fragment {
                             String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
                             int hour = Integer.parseInt(timeArr[0]);
                             int minutes = Integer.parseInt(timeArr[1]);
-                            minutes += 55;
+                            minutes += 30;
                             hour+=5;
                             if (minutes>=60){
                                 hour += 1;

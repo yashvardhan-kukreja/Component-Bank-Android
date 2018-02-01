@@ -9,7 +9,7 @@
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add more components!"
+        android:text="Add or Remove components!"
         android:textAlignment="textStart"
         android:textColor="#ffffff"
         android:fontFamily="@font/dinpro"

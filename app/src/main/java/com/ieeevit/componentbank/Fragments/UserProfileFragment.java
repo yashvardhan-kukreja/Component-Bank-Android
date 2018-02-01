@@ -97,6 +97,7 @@ public class UserProfileFragment extends Fragment {
                         if (jsonArray.length() == 0){
                             componentsList.setVisibility(View.GONE);
                             noComponentsIssued.setVisibility(View.VISIBLE);
+                            componentsIssued.setText("Components Issued: 0");
                         } else {
                             noComponentsIssued.setVisibility(View.GONE);
                             componentsList.setVisibility(View.VISIBLE);
@@ -113,7 +114,7 @@ public class UserProfileFragment extends Fragment {
                                 String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
                                 int hour = Integer.parseInt(timeArr[0]);
                                 int minutes = Integer.parseInt(timeArr[1]);
-                                minutes += 55;
+                                minutes += 30;
                                 hour+=5;
                                 if (minutes>=60){
                                     hour += 1;
@@ -174,7 +175,6 @@ public class UserProfileFragment extends Fragment {
 
         Volley.newRequestQueue(context).add(stringRequest);
         //End of the request
-
 
         return v;
     }

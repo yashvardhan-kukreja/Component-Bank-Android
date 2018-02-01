@@ -170,8 +170,6 @@ public class AdminComponentsFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             count -= 1;
-                            if (count <= 0)
-                                count = 0;
                             countText.setText(Integer.toString(count));
                         }
                     });
