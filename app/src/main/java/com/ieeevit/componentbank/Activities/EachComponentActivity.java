@@ -14,26 +14,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ieeevit.componentbank.Adapters.ListOfUsersAdapter;
 import com.ieeevit.componentbank.Classes.User;
+import com.ieeevit.componentbank.NetworkAPIs.MemberAPI;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
+import com.ieeevit.componentbank.NetworkModels.GetIssuersModel;
+import com.ieeevit.componentbank.NetworkModels.TransactionModel;
+import com.ieeevit.componentbank.NetworkModels.TransactionReqIssuersModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EachComponentActivity extends AppCompatActivity {
 TextView name, availability, value, countText, noIssuers;
@@ -43,7 +41,7 @@ ListView listOfIssuers;
 String nameStr, availStr, valStr, id; //Component Details
 List<User> users;
 FloatingActionButton fab;
-String REQUEST_COMPONENT_URL, GET_ISSUERS_URL;
+String BASE_URL_MEMBER;
 ImageView plus, minus;
 Button yesConfirmation, cancelConfirmation;
 ArrayList<String>issuedDates, quantities; //Users associated with those components;
@@ -78,8 +76,7 @@ int count = 0;
         issuedDates = new ArrayList<>();
         quantities =  new ArrayList<>();
 
-        REQUEST_COMPONENT_URL = getResources().getString(R.string.base_url) + "/requestComponent";
-        GET_ISSUERS_URL = getResources().getString(R.string.base_url) + "/getIssuers";
+        BASE_URL_MEMBER = getResources().getString(R.string.base_url);
 
         //Fetching the details of the component from the previous activity
         id = getIntent().getExtras().getString("componentId");
@@ -105,108 +102,63 @@ int count = 0;
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        //Request to get all the issuers of the current component with their details
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_ISSUERS_URL, new Response.Listener<String>() {
+
+        // Creating the retrofit instance
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_MEMBER).addConverterFactory(GsonConverterFactory.create()).build();
+        final MemberAPI memberAPI = retrofit.create(MemberAPI.class);
+
+        // Network Call for getting all the issuers of the current component with their details
+        Call<GetIssuersModel> getIssuers = memberAPI.getIssuers(token, id);
+        getIssuers.enqueue(new Callback<GetIssuersModel>() {
             @Override
-            public void onResponse(String s) {
+            public void onResponse(Call<GetIssuersModel> call, retrofit2.Response<GetIssuersModel> response) {
                 progressDialog.dismiss();
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String success = jsonObject.getString("success");
-                    String message = jsonObject.getString("message");
-                    if (success.equals("false")){
-                        Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                String success = response.body().getSuccess().toString();
+                String message = response.body().getMessage();
+                if (success.equals("false")){
+                    Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    //Fetching the details of the component
-                    nameStr = jsonObject.getJSONObject("component").getString("name");
-                    availStr = jsonObject.getJSONObject("component").getString("quantity");
-                    valStr = jsonObject.getJSONObject("component").getString("value");
-                    //Setting the details of the component
-                    name.setText(nameStr);
-                    availability.setText("Available: " + availStr);
-                    value.setText("Value: Rs." + valStr);
+                //Fetching the details of the component
+                nameStr = response.body().getComponent().getName();
+                availStr = Integer.toString(response.body().getComponent().getQuantity());
+                valStr = Integer.toString(response.body().getComponent().getValue());
 
-                    users.clear();
-                    issuedDates.clear();
-                    quantities.clear();
-                    JSONArray jsonArray = jsonObject.getJSONArray("transactions");
-                    for (int i=0;i<jsonArray.length();i++){
-                        //Syncing time and date with Indian time and date
-                        StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
-                        String time = dateBuilder.toString().split("T")[1].substring(0, 8);
-                        String[] timeArr = time.split(":");
-                        String seconds = timeArr[2];
-                        String dd = dateBuilder.toString().split("T")[0].split("-")[2];
-                        String mm = dateBuilder.toString().split("T")[0].split("-")[1];
-                        String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
-                        int hour = Integer.parseInt(timeArr[0]);
-                        int minutes = Integer.parseInt(timeArr[1]);
-                        minutes += 30;
-                        hour+=5;
-                        if (minutes>=60){
-                            hour += 1;
-                            minutes -= 60;
-                        }
-                        if (hour >= 24){
-                            hour -= 24;
-                            dd = Integer.toString(Integer.parseInt(dd) + 1);
-                            if (Integer.parseInt(dd) < 10)
-                                dd = "0" + dd;
-                        }
-                        String minutesString;
-                        if (minutes < 10)
-                            minutesString = "0" + Integer.toString(minutes);
-                        else
-                            minutesString = Integer.toString(minutes);
+                //Setting the details of the component
+                name.setText(nameStr);
+                availability.setText("Available: " + availStr);
+                value.setText("Value: Rs." + valStr);
 
-                        String hoursString;
-                        if (hour < 10)
-                            hoursString = "0" + Integer.toString(hour);
-                        else
-                            hoursString = Integer.toString(hour);
-                        String finalTime = hoursString + ":" + minutesString + ":" + seconds;
-                        String finalDate = dd + "-" + mm + "-" + yyyy;
-
-                        //Moving on
-                        issuedDates.add(finalDate + "  " + finalTime);
-                        users.add(new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno")));
-                        quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
-                    }
-                    if (users.size() == 0){
-                        listOfIssuers.setVisibility(View.GONE);
-                        noIssuers.setVisibility(View.VISIBLE);
-                    } else {
-                        listOfIssuers.setVisibility(View.VISIBLE);
-                        noIssuers.setVisibility(View.GONE);
-                        listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, EachComponentActivity.this,users, issuedDates, quantities)));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(EachComponentActivity.this, "An error occured!", Toast.LENGTH_SHORT).show();
+                users.clear();
+                issuedDates.clear();
+                quantities.clear();
+                List<TransactionReqIssuersModel> transactions = response.body().getTransactions();
+                for (int i=0;i<transactions.size();i++){
+                    String timestamp = transactions.get(i).getDate();
+                    issuedDates.add(syncTimeStamp(timestamp));
+                    users.add(new User(transactions.get(i).getMemberId().getName(), transactions.get(i).getMemberId().getRegno(), transactions.get(i).getMemberId().getEmail(), transactions.get(i).getMemberId().getPhoneno()));
+                    quantities.add(Integer.toString(transactions.get(i).getQuantity()));
+                }
+                if (users.size() == 0){
+                    listOfIssuers.setVisibility(View.GONE);
+                    noIssuers.setVisibility(View.VISIBLE);
+                } else {
+                    listOfIssuers.setVisibility(View.VISIBLE);
+                    noIssuers.setVisibility(View.GONE);
+                    listOfIssuers.setAdapter((new ListOfUsersAdapter(EachComponentActivity.this, EachComponentActivity.this,users, issuedDates, quantities)));
                 }
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
+            public void onFailure(Call<GetIssuersModel> call, Throwable t) {
                 progressDialog.dismiss();
-                volleyError.printStackTrace();
-                Toast.makeText(EachComponentActivity.this, "An error occured!!", Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", id);
-                params.put("token", token);
-                return params;
-            }
-        };
-        Volley.newRequestQueue(EachComponentActivity.this).add(stringRequest);
-        //End of the request
+                t.printStackTrace();
+                Toast.makeText(EachComponentActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
 
-
+            }
+        });
+        // End of the network call
 
         //Building and handling the final alert dialog for issuing the component
         final AlertDialog.Builder builder = new AlertDialog.Builder(EachComponentActivity.this);
@@ -262,54 +214,35 @@ int count = 0;
                             return;
                         }
 
-                        //Request for requesting to issue the component
-                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, REQUEST_COMPONENT_URL, new Response.Listener<String>() {
+                        // Network call for requesting to issue the component
+                        Call<BasicModel> requestComponent = memberAPI.requestComponent(token, id, Integer.toString(count));
+                        requestComponent.enqueue(new Callback<BasicModel>() {
                             @Override
-                            public void onResponse(String s) {
-                                try {
-                                    JSONObject jsonObject = new JSONObject(s);
-                                    String success = jsonObject.getString("success");
-                                    String message = jsonObject.getString("message");
-                                    Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_LONG).show();
-                                    if (success.equals("true")){
-                                        //availStr = Integer.toString(Integer.parseInt(availStr) - count);
-                                        //availability.setText("Available: " + availStr);
-                                        Intent i = new Intent(EachComponentActivity.this, TabbedActivity.class);
-                                        i.putExtra("name", currentUsername);
-                                        i.putExtra("email", currentUserEmail);
-                                        i.putExtra("regnum", currentUserRegNum);
-                                        i.putExtra("phonenum", currentUserPhoneNum);
-                                        i.putExtra("numissued", numissue);
-                                        i.putExtra("token", token);
-                                        startActivity(i);
-                                    }
-                                    confirmationDialog.dismiss();
-                                } catch (JSONException e) {
-                                    confirmationDialog.dismiss();
-                                    Toast.makeText(EachComponentActivity.this, "An error occured", Toast.LENGTH_LONG).show();
-                                    e.printStackTrace();
+                            public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                String success = response.body().getSuccess().toString();
+                                String message = response.body().getMessage();
+                                Toast.makeText(EachComponentActivity.this, message, Toast.LENGTH_LONG).show();
+                                if (success.equals("true")){
+                                    Intent i = new Intent(EachComponentActivity.this, TabbedActivity.class);
+                                    i.putExtra("name", currentUsername);
+                                    i.putExtra("email", currentUserEmail);
+                                    i.putExtra("regnum", currentUserRegNum);
+                                    i.putExtra("phonenum", currentUserPhoneNum);
+                                    i.putExtra("numissued", numissue);
+                                    i.putExtra("token", token);
+                                    startActivity(i);
                                 }
+                                confirmationDialog.dismiss();
                             }
-                        }, new Response.ErrorListener() {
+
                             @Override
-                            public void onErrorResponse(VolleyError volleyError) {
+                            public void onFailure(Call<BasicModel> call, Throwable t) {
                                 confirmationDialog.dismiss();
                                 Toast.makeText(EachComponentActivity.this, "An error occured", Toast.LENGTH_LONG).show();
-                                volleyError.printStackTrace();
+                                t.printStackTrace();
                             }
-                        }){
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("id", id);
-                                params.put("quantity", Integer.toString(count));
-                                params.put("email", currentUserEmail);
-                                params.put("token", token);
-                                return params;
-                            }
-                        };
-                        Volley.newRequestQueue(EachComponentActivity.this).add(stringRequest1);
-                        //End of the request
+                        });
+                        // End of the network call
                     }
                 });
 
@@ -321,5 +254,46 @@ int count = 0;
                 });
             }
         });
+    }
+
+
+    // Function for syncing time and date with IST
+    private String syncTimeStamp(String timestamp){
+        StringBuilder dateBuilder = new StringBuilder(timestamp);
+        String time = dateBuilder.toString().split("T")[1].substring(0, 8);
+        String[] timeArr = time.split(":");
+        String seconds = timeArr[2];
+        String dd = dateBuilder.toString().split("T")[0].split("-")[2];
+        String mm = dateBuilder.toString().split("T")[0].split("-")[1];
+        String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
+        int hour = Integer.parseInt(timeArr[0]);
+        int minutes = Integer.parseInt(timeArr[1]);
+        minutes += 30;
+        hour+=5;
+        if (minutes>=60){
+            hour += 1;
+            minutes -= 60;
+        }
+        if (hour >= 24){
+            hour -= 24;
+            dd = Integer.toString(Integer.parseInt(dd) + 1);
+            if (Integer.parseInt(dd) < 10)
+                dd = "0" + dd;
+        }
+        String minutesString;
+        if (minutes < 10)
+            minutesString = "0" + Integer.toString(minutes);
+        else
+            minutesString = Integer.toString(minutes);
+
+        String hoursString;
+        if (hour < 10)
+            hoursString = "0" + Integer.toString(hour);
+        else
+            hoursString = Integer.toString(hour);
+        String finalTime = hoursString + ":" + minutesString + ":" + seconds;
+        String finalDate = dd + "-" + mm + "-" + yyyy;
+
+        return (finalDate + " " + finalTime);
     }
 }

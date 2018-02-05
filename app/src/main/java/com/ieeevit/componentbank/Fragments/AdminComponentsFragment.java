@@ -18,25 +18,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.ieeevit.componentbank.Activities.AdminTabbedActivity;
 import com.ieeevit.componentbank.Adapters.ComponentsListAdapter;
 import com.ieeevit.componentbank.Classes.Component;
+import com.ieeevit.componentbank.NetworkAPIs.AdminAPI;
+import com.ieeevit.componentbank.NetworkAPIs.MemberAPI;
+import com.ieeevit.componentbank.NetworkModels.AllComponentsModel;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
+import com.ieeevit.componentbank.NetworkModels.ComponentModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Yash 1300 on 07-01-2018.
@@ -58,6 +56,7 @@ public class AdminComponentsFragment extends Fragment {
     String compId;
     AlertDialog.Builder builder;
     AlertDialog dialog;
+    String BASE_URL_ADMIN, BASE_URL_MEMBER;
 
     public AdminComponentsFragment(Context context, String token) {
         this.context = context;
@@ -92,63 +91,54 @@ public class AdminComponentsFragment extends Fragment {
         //URLs for network call
         COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url) + "/getAllComponents";
         ADD_COMPONENTS_URL = getResources().getString(R.string.base_url_admin) + "/addComponents";
-        //Request for getting the list of all components
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, COMPONENT_LIST_GET_URL, new Response.Listener<String>() {
-            @SuppressLint("ResourceAsColor")
+        BASE_URL_MEMBER = getResources().getString(R.string.base_url);
+        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
+
+        // Creating the retrofit instances
+        Retrofit retrofitMember = new Retrofit.Builder().baseUrl(BASE_URL_MEMBER).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofitAdmin = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();
+
+        MemberAPI memberAPI = retrofitMember.create(MemberAPI.class);
+        final AdminAPI adminAPI = retrofitAdmin.create(AdminAPI.class);
+
+
+        // Network call for getting the list of all the components
+        Call<AllComponentsModel> getAllComponents = memberAPI.getAllComponents(token);
+        getAllComponents.enqueue(new Callback<AllComponentsModel>() {
             @Override
-            public void onResponse(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String success = jsonObject.getString("success"); // For parsing the success
-                    String message = jsonObject.getString("message"); // For parsing the message
+            public void onResponse(Call<AllComponentsModel> call, retrofit2.Response<AllComponentsModel> response) {
+                String success = response.body().getSuccess().toString(); // For parsing the success
+                String message = response.body().getMessage(); // For parsing the message
 
-                    if (success.equals("false")){
-                        progressDialog.dismiss();
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                    } else {
-                        progressDialog.dismiss();
-                        final JSONArray jsonArray = jsonObject.getJSONArray("components"); // For parsing the json array of components
-                        componentList.clear();
-                        valuesList.clear();
-                        componentList = new ArrayList<>();
-                        for (int position=0;position<jsonArray.length();position++){
-                            Component component = new Component(jsonArray.getJSONObject(position).getString("name"), jsonArray.getJSONObject(position).getString("value"), jsonArray.getJSONObject(position).getString("quantity"), jsonArray.getJSONObject(position).getString("_id"));
-                            componentList.add(component);
-                            valuesList.add("Rs. " + jsonArray.getJSONObject(position).getString("value"));
-                            components.setAdapter((new ComponentsListAdapter(context, componentList, valuesList,0))); // Setting the list of dates as list of values because just like dates, the values will be displayed as String. Did this to avoid creating a whole new adapter
-                            if (position == (jsonArray.length() - 1)){
-                                progressDialog.dismiss();
-                            }
+                if (success.equals("false")){
+                    progressDialog.dismiss();
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                } else {
+                    progressDialog.dismiss();
+                    List<ComponentModel> componentModels = response.body().getComponents();
+                    componentList.clear();
+                    valuesList.clear();
+                    componentList = new ArrayList<>();
+                    for (int position=0; position<componentModels.size(); position++){
+                        Component component = new Component(componentModels.get(position).getName(), Integer.toString(componentModels.get(position).getValue()), Integer.toString(componentModels.get(position).getQuantity()), componentModels.get(position).getId());
+                        componentList.add(component);
+                        valuesList.add("Rs. " + Integer.toString(componentModels.get(position).getValue()));
+                        components.setAdapter((new ComponentsListAdapter(context, componentList, valuesList,0))); // Setting the list of dates as list of values because just like dates, the values will be displayed as String. Did this to avoid creating a whole new adapter
+                        if (position == (componentModels.size() - 1)){
+                            progressDialog.dismiss();
                         }
                     }
-                } catch (JSONException e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
+            public void onFailure(Call<AllComponentsModel> call, Throwable t) {
                 progressDialog.dismiss();
-                volleyError.printStackTrace();
+                t.printStackTrace();
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(stringRequest);
-        //End of request
-
-
-
+        });
         // When an item of the components list is clicked
 
         components.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -177,7 +167,34 @@ public class AdminComponentsFragment extends Fragment {
                     dialogYes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            StringRequest stringRequest1 = new StringRequest(Request.Method.POST, ADD_COMPONENTS_URL, new Response.Listener<String>() {
+
+                            // Network call for adding components
+                            Call<BasicModel> addComponents = adminAPI.addComponents(token, compId, Integer.toString(count));
+                            addComponents.enqueue(new Callback<BasicModel>() {
+                                @Override
+                                public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                    String success = response.body().getSuccess().toString();
+                                    String message = response.body().getMessage();
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    if (success.equals("false")){
+                                        dialog.dismiss();
+                                        return;
+                                    }
+                                    Intent intent = new Intent(context, AdminTabbedActivity.class);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("pagerItem",  "2");
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onFailure(Call<BasicModel> call, Throwable t) {
+                                    t.printStackTrace();
+                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            // End of the network Call
+
+                            /*StringRequest stringRequest1 = new StringRequest(Request.Method.POST, ADD_COMPONENTS_URL, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String s) {
                                     try {
@@ -215,7 +232,7 @@ public class AdminComponentsFragment extends Fragment {
                                 }
                             };
                             Volley.newRequestQueue(context).add(stringRequest1);
-                            //End of the request
+                            //End of the request*/
                         }
                     });
 

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Component Bank</string>
-    <string name="base_url">https://componentbankredefined.herokuapp.com/member</string>
-    <string name="base_url_admin">https://componentbankredefined.herokuapp.com/admin</string>
-    <string name="base_url_auth">https://componentbankredefined.herokuapp.com/authenticate</string>
+    <string name="base_url">https://componentbankredefined.herokuapp.com/member/</string>
+    <string name="base_url_admin">https://componentbankredefined.herokuapp.com/admin/</string>
+    <string name="base_url_auth">https://componentbankredefined.herokuapp.com/authenticate/</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="tab_text_1">Profile</string>
     <string name="tab_text_2">Components</string>

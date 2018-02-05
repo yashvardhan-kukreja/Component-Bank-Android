@@ -17,24 +17,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.ieeevit.componentbank.Activities.AdminTabbedActivity;
 import com.ieeevit.componentbank.Adapters.ListOfUnauthUsersAdapter;
+import com.ieeevit.componentbank.NetworkAPIs.AdminAPI;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
+import com.ieeevit.componentbank.NetworkModels.UnauthorizedUsersModel;
+import com.ieeevit.componentbank.NetworkModels.UserModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Yash 1300 on 10-01-2018.
@@ -48,7 +45,7 @@ public class UnauthUsersFragment extends Fragment {
     String finalRegnum;
     TextView mainTitle;
     ListView unauthList;
-    String GET_UNAUTH_USERS_URL, AUTHORIZE_USER_URL;
+    String BASE_URL_ADMIN;
     List<String> names, regnums;
 
     public UnauthUsersFragment(Context context, String token) {
@@ -65,10 +62,47 @@ public class UnauthUsersFragment extends Fragment {
         unauthList = v.findViewById(R.id.issuersListAdmin);
         names = new ArrayList<>();
         regnums = new ArrayList<>();
-        AUTHORIZE_USER_URL = getResources().getString(R.string.base_url_admin) + "/authorize";
-        GET_UNAUTH_USERS_URL = getResources().getString(R.string.base_url_admin) + "/unauthorizedUsers";
+        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
 
-        //Request for getting the unauthorized members
+        // Creating the retrofit instance
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();
+        final AdminAPI adminAPI = retrofit.create(AdminAPI.class);
+
+        // Network call for getting the list of unauthorized users
+        Call<UnauthorizedUsersModel> getUnauthorizedUsers = adminAPI.getUnauthorizedUsers(token);
+        getUnauthorizedUsers.enqueue(new Callback<UnauthorizedUsersModel>() {
+            @Override
+            public void onResponse(Call<UnauthorizedUsersModel> call, retrofit2.Response<UnauthorizedUsersModel> response) {
+                String success = response.body().getSuccess().toString();
+                String message = response.body().getMessage();
+                if (success.equals("false")){
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                names.clear();
+                regnums.clear();
+
+                List<UserModel> users = response.body().getUsers();
+                for (int i=0; i<users.size(); i++){
+                    names.add(users.get(i).getName());
+                    regnums.add(users.get(i).getRegno());
+                    ListOfUnauthUsersAdapter unauthAdapter = new ListOfUnauthUsersAdapter(context, names, regnums);
+                    unauthList.setAdapter(unauthAdapter);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UnauthorizedUsersModel> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // End of the network call
+
+
+        /* //Request for getting the unauthorized members
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_UNAUTH_USERS_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
@@ -110,7 +144,7 @@ public class UnauthUsersFragment extends Fragment {
             }
         };
         Volley.newRequestQueue(context).add(stringRequest);
-        //End of the request
+        //End of the request */
 
 
         unauthList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -119,7 +153,7 @@ public class UnauthUsersFragment extends Fragment {
                 AlertDialog.Builder authBuilder = new AlertDialog.Builder(context);
                 finalRegnum = regnums.get(i);
                 View authView = LayoutInflater.from(context).inflate(R.layout.dialog_authorize_user, null, false);
-                Button authBtn = authView.findViewById(R.id.authUserButton);
+                final Button authBtn = authView.findViewById(R.id.authUserButton);
                 Button authCancel = authView.findViewById(R.id.authUserCancel);
 
                 authBuilder.setView(authView);
@@ -128,7 +162,30 @@ public class UnauthUsersFragment extends Fragment {
                 authBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, AUTHORIZE_USER_URL, new Response.Listener<String>() {
+
+                        // Network call for authorizing a user to use this app
+                        Call<BasicModel> authorize = adminAPI.authorize(token, finalRegnum);
+                        authorize.enqueue(new Callback<BasicModel>() {
+                            @Override
+                            public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                String message = response.body().getMessage();
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                System.out.println(token);
+                                Intent i = new Intent(context, AdminTabbedActivity.class);
+                                i.putExtra("token", token);
+                                i.putExtra("pagerItem", "3");
+                                startActivity(i);
+                            }
+
+                            @Override
+                            public void onFailure(Call<BasicModel> call, Throwable t) {
+                                t.printStackTrace();
+                                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        // End of the network call
+
+                        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, AUTHORIZE_USER_URL, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
                                 try {
@@ -161,7 +218,7 @@ public class UnauthUsersFragment extends Fragment {
                                 return params;
                             }
                         };
-                        Volley.newRequestQueue(context).add(stringRequest);
+                        Volley.newRequestQueue(context).add(stringRequest);*/
                     }
                 });
 

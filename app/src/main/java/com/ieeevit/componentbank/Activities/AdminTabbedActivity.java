@@ -20,31 +20,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.ieeevit.componentbank.Fragments.AdminComponentsFragment;
 import com.ieeevit.componentbank.Fragments.AdminIssuersFragment;
 import com.ieeevit.componentbank.Fragments.UnauthUsersFragment;
+import com.ieeevit.componentbank.NetworkAPIs.AdminAPI;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AdminTabbedActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     FloatingActionButton addComponent;
-    String REG_COMPONENT_URL;
+    String BASE_URL_ADMIN;
     String token;
     String currentPagerItem;
     @Override
@@ -64,7 +59,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        REG_COMPONENT_URL = getResources().getString(R.string.base_url_admin) + "/registerComponent";
+        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -112,51 +107,39 @@ public class AdminTabbedActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        //Request for registering a new component
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, REG_COMPONENT_URL, new Response.Listener<String>() {
+                        // Creating the retrofit instance
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();
+                        AdminAPI adminAPI = retrofit.create(AdminAPI.class);
+
+                        // Network call for registering a new component
+                        Call<BasicModel> registerComponent = adminAPI.registerComponent(token, componentName.getText().toString(), componentQuantity.getText().toString(), componentValue.getText().toString());
+                        registerComponent.enqueue(new Callback<BasicModel>() {
                             @Override
-                            public void onResponse(String s) {
-                                try {
-                                    JSONObject jsonObject = new JSONObject(s);
-                                    String success = jsonObject.getString("success");
-                                    String message = jsonObject.getString("message");
-                                    Toast.makeText(AdminTabbedActivity.this, message, Toast.LENGTH_SHORT).show();
-                                    if (success.equals("true")){
-                                        compRegDialog.dismiss();
-                                        Intent i = new Intent(AdminTabbedActivity.this, AdminTabbedActivity.class);
-                                        i.putExtra("token", token);
-                                        i.putExtra("pagerItem", "0");
-                                        startActivity(i);
-                                        return;
-                                    }
+                            public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                String success = response.body().getSuccess().toString();
+                                String message = response.body().getMessage();
+                                Toast.makeText(AdminTabbedActivity.this, message, Toast.LENGTH_SHORT).show();
+                                if (success.equals("true")){
+                                    compRegDialog.dismiss();
                                     Intent i = new Intent(AdminTabbedActivity.this, AdminTabbedActivity.class);
                                     i.putExtra("token", token);
+                                    i.putExtra("pagerItem", "0"); // pagerItem corresponds to the index of the tab which will be loaded when the intent is performed
                                     startActivity(i);
-
-                                } catch (JSONException e) {
-                                    Toast.makeText(AdminTabbedActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
+                                    return;
                                 }
+                                Intent i = new Intent(AdminTabbedActivity.this, AdminTabbedActivity.class);
+                                i.putExtra("token", token);
+                                startActivity(i);
+
                             }
-                        }, new Response.ErrorListener() {
+
                             @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-                                volleyError.printStackTrace();
+                            public void onFailure(Call<BasicModel> call, Throwable t) {
+                                t.printStackTrace();
                                 Toast.makeText(AdminTabbedActivity.this, "An error occured", Toast.LENGTH_SHORT).show();
                             }
-                        }){
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("name", componentName.getText().toString());
-                                params.put("quantity", componentQuantity.getText().toString());
-                                params.put("value", componentValue.getText().toString());
-                                params.put("token", token);
-                                return params;
-                            }
-                        };
-                        Volley.newRequestQueue(AdminTabbedActivity.this).add(stringRequest);
-                        //End of the request
+                            // End of the network call
+                        });
                     }
                 });
             }

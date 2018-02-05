@@ -11,19 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.ieeevit.componentbank.NetworkAPIs.AuthAPI;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Register extends AppCompatActivity {
 EditText name, regno, email, password, contact, conpassword;
@@ -34,7 +29,7 @@ String REGISTER_URL;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        REGISTER_URL = getResources().getString(R.string.base_url_auth) + "/register";
+        REGISTER_URL = getResources().getString(R.string.base_url_auth);
         progressDialog = new ProgressDialog(Register.this);
         progressDialog.setMessage("Registering you...");
         progressDialog.setCancelable(false);
@@ -78,48 +73,37 @@ String REGISTER_URL;
                         progressDialog.dismiss();
                         Toast.makeText(Register.this, "Password and confirm password doesn't match", Toast.LENGTH_LONG).show();
                     } else {
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL, new Response.Listener<String>() {
+
+                        // Creating the retrofit instance
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(REGISTER_URL).addConverterFactory(GsonConverterFactory.create()).build();
+                        AuthAPI authAPI = retrofit.create(AuthAPI.class);
+
+                        // Network call for registering the user
+                        Call<BasicModel> register = authAPI.register(name.getText().toString(), regno.getText().toString(), email.getText().toString(), password.getText().toString(), contact.getText().toString());
+                        register.enqueue(new Callback<BasicModel>() {
                             @Override
-                            public void onResponse(String s) {
+                            public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
                                 progressDialog.dismiss();
-                                try {
-                                    JSONObject jsonObject = new JSONObject(s);
-                                    String success = jsonObject.getString("success");
-                                    String message = jsonObject.getString("message");
-                                    if (success.equals("false")){
-                                        Toast.makeText(Register.this, message, Toast.LENGTH_LONG).show();
-                                    } else {
-                                        Toast.makeText(Register.this, "You have registered successfully", Toast.LENGTH_LONG).show();
-                                        startActivity(new Intent(Register.this, LogInActivity.class));
-                                    }
-                                } catch (JSONException e) {
-                                    Toast.makeText(Register.this, "An error occured", Toast.LENGTH_LONG).show();
-                                    e.printStackTrace();
+                                String success = response.body().getSuccess().toString();
+                                String message = response.body().getMessage();
+                                if (success.equals("false")){
+                                    Toast.makeText(Register.this, message, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(Register.this, "You have registered successfully", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(Register.this, LogInActivity.class));
                                 }
                             }
-                        }, new Response.ErrorListener() {
+
                             @Override
-                            public void onErrorResponse(VolleyError volleyError) {
+                            public void onFailure(Call<BasicModel> call, Throwable t) {
                                 progressDialog.dismiss();
                                 Toast.makeText(Register.this, "An error occured", Toast.LENGTH_LONG).show();
-                                volleyError.printStackTrace();
+                                t.printStackTrace();
                             }
-                        }){
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("name", name.getText().toString());
-                                params.put("regno", regno.getText().toString());
-                                params.put("password", password.getText().toString());
-                                params.put("email", email.getText().toString());
-                                params.put("phoneno", contact.getText().toString());
-                                return params;
-                            }
-                        };
-                        Volley.newRequestQueue(Register.this).add(stringRequest);
+                        });
+                        // End of the network call
                     }
                 }
-
             }
         });
     }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,19 +14,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.ieeevit.componentbank.NetworkAPIs.AuthAPI;
+import com.ieeevit.componentbank.NetworkAPIs.MemberAPI;
+import com.ieeevit.componentbank.NetworkModels.LoginModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LogInActivity extends AppCompatActivity {
 EditText email, password;
@@ -37,18 +32,15 @@ String LOGIN_URL;
 ProgressDialog progressDialog;
 CheckBox checkBox;
 int keepMeLoggedIn = 0;
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            Intent i = new Intent(Intent.ACTION_MAIN);
-            i.addCategory(Intent.CATEGORY_HOME);
-            startActivity(i);
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.addCategory(Intent.CATEGORY_HOME);
+        startActivity(i);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +65,8 @@ int keepMeLoggedIn = 0;
             return;
         }
 
-        LOGIN_URL = getResources().getString(R.string.base_url_auth) + "/login";
+        LOGIN_URL = getResources().getString(R.string.base_url_auth);
+
         progressDialog = new ProgressDialog(LogInActivity.this);
         progressDialog.setMessage("Logging In...");
         //progressDialog.setCancelable(false);
@@ -99,70 +92,64 @@ int keepMeLoggedIn = 0;
                     Toast.makeText(LogInActivity.this, "Please enter all the details", Toast.LENGTH_LONG).show();
                 } else {
                     progressDialog.show();
-                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, LOGIN_URL, new Response.Listener<String>() {
+
+                    // Creating the retrofit instance
+                    Retrofit retrofit = new Retrofit.Builder().baseUrl(LOGIN_URL).addConverterFactory(GsonConverterFactory.create()).build();
+                    AuthAPI authAPI = retrofit.create(AuthAPI.class);
+
+                    // Network call for logging in
+                    Call<LoginModel> login = authAPI.login(email.getText().toString(), password.getText().toString());
+                    login.enqueue(new Callback<LoginModel>() {
                         @Override
-                        public void onResponse(String s) {
+                        public void onResponse(Call<LoginModel> call, retrofit2.Response<LoginModel> response) {
                             progressDialog.dismiss();
-                            try {
-                                JSONObject jsonObject1 = new JSONObject(s);
-                                String success = jsonObject1.getString("success");
-                                String message = jsonObject1.getString("message");
-                                if (success.equals("false")){
-                                    Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
-                                } else {
-                                    if (keepMeLoggedIn == 1){
-                                        SharedPreferences sharedPreferences = getSharedPreferences("logindetails", Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString("email", email.getText().toString());
-                                        editor.putString("name", jsonObject1.getString("name"));
-                                        editor.putString("regnum", jsonObject1.getString("regno"));
-                                        editor.putString("phonenum", jsonObject1.getString("phoneno"));
-                                        editor.putString("numissued", jsonObject1.getString("issuedComponents"));
-                                        editor.putString("token", jsonObject1.getString("token"));
-                                        editor.putString("isAdmin", jsonObject1.getString("isAdmin"));
-                                        editor.commit();
-                                    }
-                                    if (jsonObject1.getString("isAdmin").equals("0")){
-                                        Toast.makeText(LogInActivity.this, "Aloha!!", Toast.LENGTH_LONG).show();
-                                        Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
-                                        i.putExtra("name", jsonObject1.getString("name"));
-                                        i.putExtra("regnum", jsonObject1.getString("regno"));
-                                        i.putExtra("email", jsonObject1.getString("email"));
-                                        i.putExtra("phonenum", jsonObject1.getString("phoneno"));
-                                        i.putExtra("numissued", jsonObject1.getString("issuedComponents"));
-                                        i.putExtra("numrequested", jsonObject1.getString("requestedComponents"));
-                                        i.putExtra("token", jsonObject1.getString("token"));
-                                        startActivity(i);
-                                    } else {
-                                        Intent i = new Intent(LogInActivity.this, AdminTabbedActivity.class);
-                                        i.putExtra("token", jsonObject1.getString("token"));
-                                        i.putExtra("pagerItem",  "0");
-                                        Toast.makeText(LogInActivity.this, "Aloha Admin!!", Toast.LENGTH_LONG).show();
-                                        startActivity(i);
-                                    }
+                            String success = response.body().getSuccess().toString();
+                            String message = response.body().getMessage();
+                            if (success.equals("false")){
+                                Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
+                            } else {
+                                if (keepMeLoggedIn == 1){
+                                    SharedPreferences sharedPreferences = getSharedPreferences("logindetails", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("email", response.body().getEmail());
+                                    editor.putString("name", response.body().getName());
+                                    editor.putString("regnum", response.body().getRegno());
+                                    editor.putString("phonenum", response.body().getPhoneno());
+                                    editor.putString("numissued", Integer.toString(response.body().getIssuedComponents()));
+                                    editor.putString("token", response.body().getToken());
+                                    editor.putString("isAdmin", response.body().getIsAdmin());
+                                    editor.commit();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
+                                if (response.body().getIsAdmin().equals("0")){
+                                    Toast.makeText(LogInActivity.this, "Aloha!!", Toast.LENGTH_LONG).show();
+                                    Intent i = new Intent(LogInActivity.this, TabbedActivity.class);
+                                    i.putExtra("name", response.body().getName());
+                                    i.putExtra("regnum", response.body().getRegno());
+                                    i.putExtra("email", response.body().getEmail());
+                                    i.putExtra("phonenum", response.body().getPhoneno());
+                                    i.putExtra("numissued", Integer.toString(response.body().getIssuedComponents()));
+                                    i.putExtra("numrequested", Integer.toString(response.body().getRequesedComponents()));
+                                    i.putExtra("token", response.body().getToken());
+                                    startActivity(i);
+                                } else {
+                                    Intent i = new Intent(LogInActivity.this, AdminTabbedActivity.class);
+                                    i.putExtra("token", response.body().getToken());
+                                    i.putExtra("pagerItem",  "0");
+                                    Toast.makeText(LogInActivity.this, "Aloha Admin!!", Toast.LENGTH_LONG).show();
+                                    startActivity(i);
+                                }
                             }
                         }
-                    }, new Response.ErrorListener() {
+
                         @Override
-                        public void onErrorResponse(VolleyError volleyError) {
+                        public void onFailure(Call<LoginModel> call, Throwable t) {
                             progressDialog.dismiss();
-                            volleyError.printStackTrace();
+                            t.printStackTrace();
                             Toast.makeText(LogInActivity.this, "An error occured", Toast.LENGTH_LONG).show();
+
                         }
-                    }){
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("email", email.getText().toString());
-                            params.put("password", password.getText().toString());
-                            return params;
-                        }
-                    };
-                    Volley.newRequestQueue(LogInActivity.this).add(stringRequest1);
+                    });
+                    // End of the network call
                 }
             }
         });

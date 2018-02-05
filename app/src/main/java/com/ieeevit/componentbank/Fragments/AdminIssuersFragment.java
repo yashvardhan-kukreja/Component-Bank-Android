@@ -17,25 +17,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.ieeevit.componentbank.Activities.AdminTabbedActivity;
 import com.ieeevit.componentbank.Adapters.ListOfIssuersAdapter;
 import com.ieeevit.componentbank.Classes.User;
+import com.ieeevit.componentbank.NetworkAPIs.AdminAPI;
+import com.ieeevit.componentbank.NetworkModels.BasicModel;
+import com.ieeevit.componentbank.NetworkModels.GetMemberReqIssueModel;
+import com.ieeevit.componentbank.NetworkModels.TransactionModel;
+import com.ieeevit.componentbank.NetworkModels.TransactionReqIssuersModel;
 import com.ieeevit.componentbank.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Yash 1300 on 04-01-2018.
@@ -44,8 +42,6 @@ import java.util.Map;
 @SuppressLint("ValidFragment")
 public class AdminIssuersFragment extends Fragment {
     Context context;
-    String GET_ISSUERS_URL;
-    String GET_REQUESTS_URL;
     ProgressDialog progressDialog;
     List<String> dates;
     List<String> quantities;
@@ -55,10 +51,8 @@ public class AdminIssuersFragment extends Fragment {
     ListView issuers;
     String token;
     String transId;
-    String APPROVE_REQUEST_URL;
-    String RETURN_COMPONENT_URL;
-    String DELETE_REQUEST_URL;
     TextView mainTitle;
+    String BASE_URL_ADMIN;
     int choice; //0 for issuers, 1 for requests
 
     @SuppressLint("ValidFragment")
@@ -73,12 +67,7 @@ public class AdminIssuersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_admin_issuers, container, false);
 
-        GET_ISSUERS_URL = getResources().getString(R.string.base_url_admin) + "/issuers";
-        GET_REQUESTS_URL = getResources().getString(R.string.base_url_admin) + "/requests";
-
-        APPROVE_REQUEST_URL = getContext().getResources().getString(R.string.base_url_admin) + "/approve";
-        RETURN_COMPONENT_URL = getContext().getResources().getString(R.string.base_url_admin) + "/return";
-        DELETE_REQUEST_URL = getContext().getResources().getString(R.string.base_url_admin) + "/deleteRequest";
+        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
 
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading...");
@@ -93,15 +82,68 @@ public class AdminIssuersFragment extends Fragment {
         issuers = v.findViewById(R.id.issuersListAdmin);
         mainTitle = v.findViewById(R.id.adminIssuersMainTitle);
         String main_url;
+
+        // Creating the retrofit instance
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();
+        final AdminAPI adminAPI = retrofit.create(AdminAPI.class);
+
+        // Declaring the network call on the basis of choice
+        Call<GetMemberReqIssueModel> mainCall;
         if (choice == 0){
-            main_url = GET_ISSUERS_URL;
+            mainCall = adminAPI.getIssuers(token);
             mainTitle.setText("Have the issuers returned the components?");
         }
         else{
-            main_url = GET_REQUESTS_URL;
+            mainCall = adminAPI.getRequests(token);
             mainTitle.setText("Approve/Delete the component requests!");
         }
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, main_url, new Response.Listener<String>() {
+
+        // Network call getting the list of issuers or requests on the basis of the choice
+        mainCall.enqueue(new Callback<GetMemberReqIssueModel>() {
+            @Override
+            public void onResponse(Call<GetMemberReqIssueModel> call, retrofit2.Response<GetMemberReqIssueModel> response) {
+                String success = response.body().getSuccess().toString();
+                String message = response.body().getMessage();
+                if (success.equals("false")){
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dates.clear();
+                users.clear();
+                quantities.clear();
+                transactionIds.clear();
+                compNames.clear();
+
+                List<TransactionReqIssuersModel> transactions = response.body().getOutput();
+                if (transactions.size() == 0)
+                    progressDialog.dismiss();
+                else {
+
+                    for (int i=(transactions.size()-1);i>-1;i--){
+                        String timestamp = transactions.get(i).getDate();
+                        dates.add(syncTimeStamp(timestamp));
+                        quantities.add(Integer.toString(transactions.get(i).getQuantity()));
+                        compNames.add(transactions.get(i).getComponentName());
+                        transactionIds.add(transactions.get(i).getId());
+
+                        users.add((new User(transactions.get(i).getMemberId().getName(), transactions.get(i).getMemberId().getRegno(), transactions.get(i).getMemberId().getEmail(), transactions.get(i).getMemberId().getPhoneno())));
+                        issuers.setAdapter((new ListOfIssuersAdapter(context, users, dates, quantities, compNames, choice)));
+                        if (i == 0 )
+                            progressDialog.dismiss();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetMemberReqIssueModel> call, Throwable t) {
+                progressDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(context, "An error occured!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        // End of the network call
+
+        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, main_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 try {
@@ -123,49 +165,10 @@ public class AdminIssuersFragment extends Fragment {
                     else {
 
                         for (int i=(jsonArray.length()-1);i>-1;i--){
-                            //Syncing time and date with Indian time and date
-                            StringBuilder dateBuilder = new StringBuilder(jsonArray.getJSONObject(i).getString("date"));
-                            String time = dateBuilder.toString().split("T")[1].substring(0, 8);
-                            String[] timeArr = time.split(":");
-                            String seconds = timeArr[2];
-                            String dd = dateBuilder.toString().split("T")[0].split("-")[2];
-                            String mm = dateBuilder.toString().split("T")[0].split("-")[1];
-                            String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
-                            int hour = Integer.parseInt(timeArr[0]);
-                            int minutes = Integer.parseInt(timeArr[1]);
-                            minutes += 30;
-                            hour+=5;
-                            if (minutes>=60){
-                                hour += 1;
-                                minutes -= 60;
-                            }
-                            if (hour >= 24){
-                                hour -= 24;
-                                dd = Integer.toString(Integer.parseInt(dd) + 1);
-                                if (Integer.parseInt(dd) < 10)
-                                    dd = "0" + dd;
-                            }
-                            String minutesString;
-                            if (minutes < 10)
-                                minutesString = "0" + Integer.toString(minutes);
-                            else
-                                minutesString = Integer.toString(minutes);
-
-                            String hoursString;
-                            if (hour < 10)
-                                hoursString = "0" + Integer.toString(hour);
-                            else
-                                hoursString = Integer.toString(hour);
-                            String finalTime = hoursString + ":" + minutesString + ":" + seconds;
-                            String finalDate = dd + "-" + mm + "-" + yyyy;
-
-                            //Moving on
-                            dates.add(finalDate + "  " + finalTime);
+                            String timestamp = jsonArray.getJSONObject(i).getString("date");
+                            dates.add(syncTimeStamp(timestamp));
                             quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
                             compNames.add(jsonArray.getJSONObject(i).getString("componentName"));
-
-
-
                             transactionIds.add(jsonArray.getJSONObject(i).getString("_id"));
                             users.add((new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno"))));
                             issuers.setAdapter((new ListOfIssuersAdapter(context, users, dates, quantities, compNames, choice)));
@@ -195,7 +198,7 @@ public class AdminIssuersFragment extends Fragment {
             }
         };
         Volley.newRequestQueue(context).add(stringRequest);
-        //End of the request
+        //End of the request*/
 
         issuers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -219,9 +222,30 @@ public class AdminIssuersFragment extends Fragment {
                     yes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //progressDialog.setMessage("Returning the component...");
-                            //progressDialog.show();
-                            StringRequest stringRequest = new StringRequest(Request.Method.POST, RETURN_COMPONENT_URL, new Response.Listener<String>() {
+                            //Network call for returning the component
+                            Call<BasicModel> returnComponent = adminAPI.returnComponent(token, transId);
+                            returnComponent.enqueue(new Callback<BasicModel>() {
+                                @Override
+                                public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                    String message = response.body().getMessage();
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    Intent i = new Intent(context, AdminTabbedActivity.class);
+                                    i.putExtra("token", token);
+                                    i.putExtra("pagerItem",  "1");
+                                    getContext().startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(Call<BasicModel> call, Throwable t) {
+                                    t.printStackTrace();
+                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            // End of the network call
+
+
+                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, RETURN_COMPONENT_URL, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String s) {
                                     // progressDialog.dismiss();
@@ -242,7 +266,6 @@ public class AdminIssuersFragment extends Fragment {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    //progressDialog.dismiss();
                                     volleyError.printStackTrace();
                                     Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
                                 }
@@ -255,7 +278,7 @@ public class AdminIssuersFragment extends Fragment {
                                     return params;
                                 }
                             };
-                            Volley.newRequestQueue(context).add(stringRequest);
+                            Volley.newRequestQueue(context).add(stringRequest);*/
                         }
                     });
                     cancel.setOnClickListener(new View.OnClickListener() {
@@ -273,12 +296,33 @@ public class AdminIssuersFragment extends Fragment {
                     yes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //progressDialog.setMessage("Approving the request...");
-                            //progressDialog.show();
-                            StringRequest stringRequest1 = new StringRequest(Request.Method.POST, APPROVE_REQUEST_URL, new Response.Listener<String>() {
+
+                            // Network call for approving the request of user for issuing a component
+                            Call<BasicModel> approve = adminAPI.approve(token, transId);
+                            approve.enqueue(new Callback<BasicModel>() {
+                                @Override
+                                public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                    String message = response.body().getMessage();
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    Intent i = new Intent(context, AdminTabbedActivity.class);
+                                    i.putExtra("token", token);
+                                    i.putExtra("pagerItem",  "0");
+                                    getContext().startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(Call<BasicModel> call, Throwable t) {
+                                    t.printStackTrace();
+                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+                            // End of the network call
+
+                            /*StringRequest stringRequest1 = new StringRequest(Request.Method.POST, APPROVE_REQUEST_URL, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String s) {
-                                    //progressDialog.dismiss();
                                     try {
                                         JSONObject jsonObject = new JSONObject(s);
                                         String message = jsonObject.getString("message");
@@ -296,7 +340,6 @@ public class AdminIssuersFragment extends Fragment {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    //progressDialog.dismiss();
                                     volleyError.printStackTrace();
                                     Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
                                 }
@@ -309,13 +352,40 @@ public class AdminIssuersFragment extends Fragment {
                                     return params;
                                 }
                             };
-                            Volley.newRequestQueue(context).add(stringRequest1);
+                            Volley.newRequestQueue(context).add(stringRequest1);*/
                         }
                     });
                     cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            StringRequest stringRequest = new StringRequest(Request.Method.POST, DELETE_REQUEST_URL, new Response.Listener<String>() {
+
+                            // Network call for deleting the request of a user for issuing a component
+                            Call<BasicModel> deleteRequest = adminAPI.deleteRequest(token, transId);
+                            deleteRequest.enqueue(new Callback<BasicModel>() {
+                                @Override
+                                public void onResponse(Call<BasicModel> call, retrofit2.Response<BasicModel> response) {
+                                    String success = response.body().getSuccess().toString();
+                                    String message = response.body().getMessage();
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    if (success.equals("false")){
+                                        dialog.dismiss();
+                                        return;
+                                    }
+                                    Intent i = new Intent(context, AdminTabbedActivity.class);
+                                    i.putExtra("token", token);
+                                    i.putExtra("pagerItem",  "0");
+                                    getContext().startActivity(i);
+                                }
+
+                                @Override
+                                public void onFailure(Call<BasicModel> call, Throwable t) {
+                                    t.printStackTrace();
+                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            // End of the network call
+
+                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, DELETE_REQUEST_URL, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String s) {
                                     try {
@@ -352,7 +422,7 @@ public class AdminIssuersFragment extends Fragment {
                                 }
                             };
                             Volley.newRequestQueue(context).add(stringRequest);
-                            //End of the request
+                            //End of the request*/
 
                             dialog.dismiss();
                         }
@@ -362,5 +432,45 @@ public class AdminIssuersFragment extends Fragment {
         });
 
         return v;
+    }
+
+    // Function for syncing time and date with IST
+    private String syncTimeStamp(String timestamp){
+        StringBuilder dateBuilder = new StringBuilder(timestamp);
+        String time = dateBuilder.toString().split("T")[1].substring(0, 8);
+        String[] timeArr = time.split(":");
+        String seconds = timeArr[2];
+        String dd = dateBuilder.toString().split("T")[0].split("-")[2];
+        String mm = dateBuilder.toString().split("T")[0].split("-")[1];
+        String yyyy = dateBuilder.toString().split("T")[0].split("-")[0];
+        int hour = Integer.parseInt(timeArr[0]);
+        int minutes = Integer.parseInt(timeArr[1]);
+        minutes += 30;
+        hour+=5;
+        if (minutes>=60){
+            hour += 1;
+            minutes -= 60;
+        }
+        if (hour >= 24){
+            hour -= 24;
+            dd = Integer.toString(Integer.parseInt(dd) + 1);
+            if (Integer.parseInt(dd) < 10)
+                dd = "0" + dd;
+        }
+        String minutesString;
+        if (minutes < 10)
+            minutesString = "0" + Integer.toString(minutes);
+        else
+            minutesString = Integer.toString(minutes);
+
+        String hoursString;
+        if (hour < 10)
+            hoursString = "0" + Integer.toString(hour);
+        else
+            hoursString = Integer.toString(hour);
+        String finalTime = hoursString + ":" + minutesString + ":" + seconds;
+        String finalDate = dd + "-" + mm + "-" + yyyy;
+
+        return (finalDate + " " + finalTime);
     }
 }
