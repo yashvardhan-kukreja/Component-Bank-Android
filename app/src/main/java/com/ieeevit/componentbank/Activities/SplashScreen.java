@@ -10,15 +10,20 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.ieeevit.componentbank.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SplashScreen extends AppCompatActivity {
-ImageView splashImage, ieeeSplash;
+
+    @BindView(R.id.splashImage) ImageView splashImage;
+    @BindView(R.id.ieeeSplash) ImageView ieeeSplash;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        ButterKnife.bind(this);
 
-        splashImage = findViewById(R.id.splashImage);
-        ieeeSplash = findViewById(R.id.ieeeSplash);
         YoYo.with(Techniques.FadeIn).duration(2500).repeat(0).playOn(splashImage);
         YoYo.with(Techniques.FadeIn).duration(2500).repeat(0).playOn(ieeeSplash);
         (new Handler()).postDelayed(new Runnable() {

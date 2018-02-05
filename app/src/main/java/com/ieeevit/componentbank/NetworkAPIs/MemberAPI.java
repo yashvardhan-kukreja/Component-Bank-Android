@@ -18,7 +18,6 @@ import retrofit2.http.POST;
 
 public interface MemberAPI {
 
-
     @POST("delete")
     Call<BasicModel> delete(
             @Header("x-access-token") String token

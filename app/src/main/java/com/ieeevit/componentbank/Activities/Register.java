@@ -15,31 +15,35 @@ import com.ieeevit.componentbank.NetworkAPIs.AuthAPI;
 import com.ieeevit.componentbank.NetworkModels.BasicModel;
 import com.ieeevit.componentbank.R;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Register extends AppCompatActivity {
-EditText name, regno, email, password, contact, conpassword;
-Button register;
-ProgressDialog progressDialog;
-String REGISTER_URL;
+
+    @BindView(R.id.registerName) EditText name;
+    @BindView(R.id.registerRegNum) EditText regno;
+    @BindView(R.id.registerEmail) EditText email;
+    @BindView(R.id.registerPassword) EditText password;
+    @BindView(R.id.registerContactNum) EditText contact;
+    @BindView(R.id.registerConfirmPassword) EditText conpassword;
+    @BindView(R.id.registerButton) Button register;
+    @BindString(R.string.base_url_auth) String BASE_URL_AUTH;
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        REGISTER_URL = getResources().getString(R.string.base_url_auth);
+        ButterKnife.bind(this);
+
         progressDialog = new ProgressDialog(Register.this);
         progressDialog.setMessage("Registering you...");
         progressDialog.setCancelable(false);
-        name = findViewById(R.id.registerName);
-        regno = findViewById(R.id.registerRegNum);
-        email = findViewById(R.id.registerEmail);
-        password = findViewById(R.id.registerPassword);
-        contact = findViewById(R.id.registerContactNum);
-        conpassword = findViewById(R.id.registerConfirmPassword);
-        register = findViewById(R.id.registerButton);
 
         contact.addTextChangedListener(new TextWatcher() {
             @Override
@@ -75,7 +79,7 @@ String REGISTER_URL;
                     } else {
 
                         // Creating the retrofit instance
-                        Retrofit retrofit = new Retrofit.Builder().baseUrl(REGISTER_URL).addConverterFactory(GsonConverterFactory.create()).build();
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_AUTH).addConverterFactory(GsonConverterFactory.create()).build();
                         AuthAPI authAPI = retrofit.create(AuthAPI.class);
 
                         // Network call for registering the user

@@ -14,6 +14,13 @@ import retrofit2.http.POST;
 
 public interface AuthAPI {
 
+    @POST("login")
+    @FormUrlEncoded
+    Call<LoginModel> login(
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
     @POST("register")
     @FormUrlEncoded
     Call<BasicModel> register(
@@ -23,12 +30,4 @@ public interface AuthAPI {
             @Field("password") String password,
             @Field("phoneno") String phoneno
     );
-
-    @POST("login")
-    @FormUrlEncoded
-    Call<LoginModel> login(
-            @Field("email") String email,
-            @Field("password") String password
-    );
-
 }

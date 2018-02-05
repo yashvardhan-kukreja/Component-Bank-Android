@@ -31,6 +31,9 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -42,9 +45,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class AdminComponentsFragment extends Fragment {
+
+    @BindView(R.id.adminComponentsList) ListView components;
+    @BindString(R.string.base_url_admin) String BASE_URL_ADMIN;
+    @BindString(R.string.base_url) String BASE_URL_MEMBER;
+
     Context context;
-    ListView components;
-    String COMPONENT_LIST_GET_URL, ADD_COMPONENTS_URL;
     ProgressDialog progressDialog;
     String token;
     List<Component> componentList;
@@ -56,7 +62,6 @@ public class AdminComponentsFragment extends Fragment {
     String compId;
     AlertDialog.Builder builder;
     AlertDialog dialog;
-    String BASE_URL_ADMIN, BASE_URL_MEMBER;
 
     public AdminComponentsFragment(Context context, String token) {
         this.context = context;
@@ -67,7 +72,8 @@ public class AdminComponentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_admin_components, container, false);
-        components = v.findViewById(R.id.adminComponentsList);
+        ButterKnife.bind(this, v);
+
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading the components...");
         progressDialog.setCancelable(false);
@@ -87,13 +93,6 @@ public class AdminComponentsFragment extends Fragment {
 
         componentList = new ArrayList<>();
         valuesList = new ArrayList<>();
-
-        //URLs for network call
-        COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url) + "/getAllComponents";
-        ADD_COMPONENTS_URL = getResources().getString(R.string.base_url_admin) + "/addComponents";
-
-        BASE_URL_MEMBER = getResources().getString(R.string.base_url);
-        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
 
         // Creating the retrofit instances
         Retrofit retrofitMember = new Retrofit.Builder().baseUrl(BASE_URL_MEMBER).addConverterFactory(GsonConverterFactory.create()).build();
@@ -139,8 +138,8 @@ public class AdminComponentsFragment extends Fragment {
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
             }
         });
-        // When an item of the components list is clicked
 
+        // When an item of the components list is clicked
         components.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

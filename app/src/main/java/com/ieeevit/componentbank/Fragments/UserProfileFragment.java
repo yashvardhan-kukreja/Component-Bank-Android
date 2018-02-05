@@ -24,6 +24,9 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -35,16 +38,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class UserProfileFragment extends Fragment {
+
+    @BindView(R.id.profilePageGreeting) TextView name;
+    @BindView(R.id.profileRegNum) TextView regnum;
+    @BindView(R.id.profileCompIssued) TextView componentsIssued;
+    @BindView(R.id.profileCompRequested) TextView componentsRequested;
+    @BindView(R.id.profileIssuedComponentsList) ListView componentsList;
+    @BindView(R.id.noComponentsIssued) TextView noComponentsIssued;
+    @BindString(R.string.base_url) String BASE_URL_MEMBER;
+
     Context context;
     String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum;
-    TextView name, regnum, componentsIssued, componentsRequested;
-    ListView componentsList;
     List<Component> components;
     List<String> dates;
-    String CURRENTLY_ISSUED_COMPONENTS;
     ProgressDialog progressDialog;
-    TextView noComponentsIssued;
     String numreq, numissue, token;
+
     public UserProfileFragment(Context context, String currentUsername, String currentUserEmail, String currentUserRegNum, String currentUserPhoneNum, String numreq, String numissue, String token) {
         this.context = context;
         this.currentUsername = currentUsername;
@@ -60,25 +69,21 @@ public class UserProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user_profile_page, container, false);
+        ButterKnife.bind(this, v);
+
         components = new ArrayList<>();
         dates = new ArrayList<>();
-        name = v.findViewById(R.id.profilePageGreeting);
-        noComponentsIssued = v.findViewById(R.id.noComponentsIssued);
-        regnum = v.findViewById(R.id.profileRegNum);
-        componentsIssued = v.findViewById(R.id.profileCompIssued);
-        componentsRequested = v.findViewById(R.id.profileCompRequested);
         componentsRequested.setVisibility(View.GONE);
-        CURRENTLY_ISSUED_COMPONENTS = getResources().getString(R.string.base_url);
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading your details...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        componentsList = v.findViewById(R.id.profileIssuedComponentsList);
         componentsList.setVisibility(View.GONE);
         name.setText(currentUsername);
         regnum.setText(currentUserRegNum);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(CURRENTLY_ISSUED_COMPONENTS).addConverterFactory(GsonConverterFactory.create()).build();
+        // Creating the retrofit instance
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_MEMBER).addConverterFactory(GsonConverterFactory.create()).build();
         MemberAPI memberAPI = retrofit.create(MemberAPI.class);
 
         // Network call for getting the list of issued components with some specific details
@@ -90,7 +95,6 @@ public class UserProfileFragment extends Fragment {
                 String success = response.body().getSuccess().toString();
                 String message = response.body().getMessage();
                 if (success.equals("true")){
-                    //componentsRequested.setText("Components Requested: " + numreq);
                     List<TransactionMemberComponentsModel> transactions= response.body().getTransactions();
                     components.clear();
                     dates.clear();
@@ -123,70 +127,7 @@ public class UserProfileFragment extends Fragment {
                 t.printStackTrace();
             }
         });
-
         // End of the network call
-
-        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, CURRENTLY_ISSUED_COMPONENTS, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                try {
-                    progressDialog.dismiss();
-                    JSONObject jsonObject =  new JSONObject(s);
-                    String success = jsonObject.getString("success");
-                    String message = jsonObject.getString("message");
-                    if (success.equals("true")){
-                        //componentsRequested.setText("Components Requested: " + numreq);
-                        JSONArray jsonArray = jsonObject.getJSONArray("components");
-                        components.clear();
-                        dates.clear();
-                        if (jsonArray.length() == 0){
-                            componentsList.setVisibility(View.GONE);
-                            noComponentsIssued.setVisibility(View.VISIBLE);
-                            componentsIssued.setText("Components Issued: 0");
-                        } else {
-                            noComponentsIssued.setVisibility(View.GONE);
-                            componentsList.setVisibility(View.VISIBLE);
-                            int sum = 0;
-                            for (int i=jsonArray.length()-1; i>-1;i--){
-                                sum += Integer.parseInt(jsonArray.getJSONObject(i).getString("quantity"));
-                                //Syncing time and date with Indian time and date
-                                String timestamp = jsonArray.getJSONObject(i).getString("date");
-                                //Moving on
-                                components.add((new Component(jsonArray.getJSONObject(i).getString("componentName"), null, jsonArray.getJSONObject(i).getString("quantity"), jsonArray.getJSONObject(i).getString("componentId"))));
-                                dates.add(syncTimeStamp(timestamp));
-                                componentsList.setAdapter((new ComponentsListAdapter(context, components, dates,0)));
-                            }
-                            componentsIssued.setText("Components Issued: " + Integer.toString(sum));
-                        }
-                    } else {
-                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(context, "An error occured", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                progressDialog.dismiss();
-                Toast.makeText(context, "An error occured", Toast.LENGTH_LONG).show();
-                volleyError.printStackTrace();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("email", currentUserEmail);
-                params.put("token", token);
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(stringRequest);
-        //End of the request*/
-
         return v;
     }
 

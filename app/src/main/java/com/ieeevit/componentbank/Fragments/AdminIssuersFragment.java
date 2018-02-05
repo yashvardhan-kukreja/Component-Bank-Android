@@ -30,6 +30,9 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -41,6 +44,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class AdminIssuersFragment extends Fragment {
+
+    @BindView(R.id.issuersListAdmin) ListView issuers;
+    @BindView(R.id.adminIssuersMainTitle) TextView mainTitle;
+    @BindString(R.string.base_url_admin) String BASE_URL_ADMIN;
+
     Context context;
     ProgressDialog progressDialog;
     List<String> dates;
@@ -48,11 +56,8 @@ public class AdminIssuersFragment extends Fragment {
     List<String> transactionIds;
     List<String> compNames;
     List<User> users;
-    ListView issuers;
     String token;
     String transId;
-    TextView mainTitle;
-    String BASE_URL_ADMIN;
     int choice; //0 for issuers, 1 for requests
 
     @SuppressLint("ValidFragment")
@@ -66,9 +71,8 @@ public class AdminIssuersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_admin_issuers, container, false);
-
-        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
-
+        ButterKnife.bind(this, v);
+        
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
@@ -79,9 +83,6 @@ public class AdminIssuersFragment extends Fragment {
         users = new ArrayList<>();
         transactionIds = new ArrayList<>();
         compNames = new ArrayList<>();
-        issuers = v.findViewById(R.id.issuersListAdmin);
-        mainTitle = v.findViewById(R.id.adminIssuersMainTitle);
-        String main_url;
 
         // Creating the retrofit instance
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();
@@ -118,7 +119,6 @@ public class AdminIssuersFragment extends Fragment {
                 if (transactions.size() == 0)
                     progressDialog.dismiss();
                 else {
-
                     for (int i=(transactions.size()-1);i>-1;i--){
                         String timestamp = transactions.get(i).getDate();
                         dates.add(syncTimeStamp(timestamp));

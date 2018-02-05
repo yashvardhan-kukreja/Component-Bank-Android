@@ -19,19 +19,24 @@ import com.ieeevit.componentbank.NetworkAPIs.MemberAPI;
 import com.ieeevit.componentbank.NetworkModels.LoginModel;
 import com.ieeevit.componentbank.R;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LogInActivity extends AppCompatActivity {
-EditText email, password;
-Button login;
-TextView signup;
-String LOGIN_URL;
-ProgressDialog progressDialog;
-CheckBox checkBox;
-int keepMeLoggedIn = 0;
+
+    @BindView(R.id.loginEmail) EditText email;
+    @BindView(R.id.loginPassword) EditText password;
+    @BindView(R.id.loginButton) Button login;
+    @BindView(R.id.signUpLink) TextView signup;
+    @BindView(R.id.keepMeLoggedIn) CheckBox checkBox;
+    @BindString(R.string.base_url_auth) String BASE_URL_AUTH;
+    ProgressDialog progressDialog;
+    int keepMeLoggedIn = 0;
 
     @Override
     public void onBackPressed() {
@@ -45,6 +50,7 @@ int keepMeLoggedIn = 0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+        ButterKnife.bind(this);
 
         SharedPreferences sharedPreferences = getSharedPreferences("logindetails", MODE_PRIVATE);
         if (!(sharedPreferences.getString("token", "") == "" || sharedPreferences.getString("token", "") == null)){
@@ -65,16 +71,8 @@ int keepMeLoggedIn = 0;
             return;
         }
 
-        LOGIN_URL = getResources().getString(R.string.base_url_auth);
-
         progressDialog = new ProgressDialog(LogInActivity.this);
         progressDialog.setMessage("Logging In...");
-        //progressDialog.setCancelable(false);
-        email = findViewById(R.id.loginEmail);
-        password = findViewById(R.id.loginPassword);
-        login = findViewById(R.id.loginButton);
-        signup = findViewById(R.id.signUpLink);
-        checkBox = findViewById(R.id.keepMeLoggedIn);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -94,7 +92,7 @@ int keepMeLoggedIn = 0;
                     progressDialog.show();
 
                     // Creating the retrofit instance
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl(LOGIN_URL).addConverterFactory(GsonConverterFactory.create()).build();
+                    Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_AUTH).addConverterFactory(GsonConverterFactory.create()).build();
                     AuthAPI authAPI = retrofit.create(AuthAPI.class);
 
                     // Network call for logging in

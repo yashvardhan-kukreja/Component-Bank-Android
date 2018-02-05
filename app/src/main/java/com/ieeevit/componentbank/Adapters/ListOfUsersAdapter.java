@@ -24,6 +24,9 @@ import com.ieeevit.componentbank.R;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Yash 1300 on 04-12-2017.
  */
@@ -31,14 +34,17 @@ import java.util.List;
 
 public class ListOfUsersAdapter extends ArrayAdapter {
 
-    TextView name, regnum;
-    Button call;
+    @BindView(R.id.nameOfIssuer) TextView name;
+    @BindView(R.id.regNumOfIssuer) TextView regnum;
+    @BindView(R.id.userCallButton) Button call;
+    @BindView(R.id.issuerLayout) LinearLayout issuer;
+
     Context context;
     List<User> users;
     List<String> issueDates;
     List<String> quantities;
-    LinearLayout issuer;
     Activity activity;
+
     public ListOfUsersAdapter(@NonNull Context context, Activity activity,@NonNull List users, List issueDates, List quantities) {
         super(context, R.layout.adapter_users_list, users);
         this.context = context;
@@ -52,10 +58,8 @@ public class ListOfUsersAdapter extends ArrayAdapter {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.adapter_users_list, parent, false);
-        name = v.findViewById(R.id.nameOfIssuer);
-        regnum = v.findViewById(R.id.regNumOfIssuer);
-        call = v.findViewById(R.id.userCallButton);
-        issuer = v.findViewById(R.id.issuerLayout);
+        ButterKnife.bind(this, v);
+
         name.setText(users.get(position).getName());
         regnum.setText(users.get(position).getRegNum());
 

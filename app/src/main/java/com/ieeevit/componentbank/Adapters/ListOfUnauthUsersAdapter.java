@@ -13,12 +13,18 @@ import com.ieeevit.componentbank.R;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Yash 1300 on 10-01-2018.
  */
 
 public class ListOfUnauthUsersAdapter extends ArrayAdapter {
-    TextView name, regnum;
+
+    @BindView(R.id.unauthUsername) TextView name;
+    @BindView(R.id.unauthUserRegnum) TextView regnum;
+
     Context context;
     List<String> names;
     List<String> regnums;
@@ -33,10 +39,8 @@ public class ListOfUnauthUsersAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
         View v = LayoutInflater.from(context).inflate(R.layout.adapter_unauth_users, parent, false);
-        name = v.findViewById(R.id.unauthUsername);
-        regnum = v.findViewById(R.id.unauthUserRegnum);
+        ButterKnife.bind(this, v);
 
         name.setText(names.get(position));
         regnum.setText(regnums.get(position));

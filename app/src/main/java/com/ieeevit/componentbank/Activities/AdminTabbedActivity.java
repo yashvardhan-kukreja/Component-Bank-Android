@@ -29,6 +29,8 @@ import com.ieeevit.componentbank.NetworkAPIs.AdminAPI;
 import com.ieeevit.componentbank.NetworkModels.BasicModel;
 import com.ieeevit.componentbank.R;
 
+import butterknife.BindString;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -39,7 +41,7 @@ public class AdminTabbedActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     FloatingActionButton addComponent;
-    String BASE_URL_ADMIN;
+    @BindString(R.string.base_url_admin) String BASE_URL_ADMIN;
     String token;
     String currentPagerItem;
     @Override
@@ -56,10 +58,11 @@ public class AdminTabbedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_tabbed);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
+        //BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);

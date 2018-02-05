@@ -84,6 +84,4 @@ public interface AdminAPI {
     Call<GetMemberReqIssueModel> getIssuers(
             @Header("x-access-token") String token
     );
-
-
 }

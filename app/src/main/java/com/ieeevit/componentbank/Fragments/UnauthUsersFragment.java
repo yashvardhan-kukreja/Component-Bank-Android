@@ -28,6 +28,9 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -40,12 +43,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @SuppressLint("ValidFragment")
 public class UnauthUsersFragment extends Fragment {
 
+    @BindView(R.id.adminIssuersMainTitle) TextView mainTitle;
+    @BindView(R.id.issuersListAdmin) ListView unauthList;
+    @BindString(R.string.base_url_admin) String BASE_URL_ADMIN;
+
     Context context;
     String token;
     String finalRegnum;
-    TextView mainTitle;
-    ListView unauthList;
-    String BASE_URL_ADMIN;
     List<String> names, regnums;
 
     public UnauthUsersFragment(Context context, String token) {
@@ -57,12 +61,11 @@ public class UnauthUsersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_admin_issuers, null, false);
-        mainTitle = v.findViewById(R.id.adminIssuersMainTitle);
+        ButterKnife.bind(this, v);
+
         mainTitle.setText("Unauthorized users");
-        unauthList = v.findViewById(R.id.issuersListAdmin);
         names = new ArrayList<>();
         regnums = new ArrayList<>();
-        BASE_URL_ADMIN = getResources().getString(R.string.base_url_admin);
 
         // Creating the retrofit instance
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_ADMIN).addConverterFactory(GsonConverterFactory.create()).build();

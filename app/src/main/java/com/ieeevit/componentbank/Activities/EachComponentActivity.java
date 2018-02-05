@@ -28,26 +28,35 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EachComponentActivity extends AppCompatActivity {
-TextView name, availability, value, countText, noIssuers;
-ProgressDialog progressDialog;
-String token;
-ListView listOfIssuers;
-String nameStr, availStr, valStr, id; //Component Details
-List<User> users;
-FloatingActionButton fab;
-String BASE_URL_MEMBER;
-ImageView plus, minus;
-Button yesConfirmation, cancelConfirmation;
-ArrayList<String>issuedDates, quantities; //Users associated with those components;
-AlertDialog confirmationDialog;
-String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numreq, numissue;
-int count = 0;
+
+    @BindView(R.id.componentName) TextView name;
+    @BindView(R.id.componentsAvailable) TextView availability;
+    @BindView(R.id.componentValue) TextView value;
+    @BindView(R.id.listOfComponentIssuers) ListView listOfIssuers;
+    @BindView(R.id.issueAComponent) FloatingActionButton fab;
+    @BindView(R.id.noIssuers) TextView noIssuers;
+    @BindString(R.string.base_url) String BASE_URL_MEMBER;
+    TextView countText;
+    ProgressDialog progressDialog;
+    String token;
+    String nameStr, availStr, valStr, id; //Component Details
+    List<User> users;
+    ImageView plus, minus;
+    Button yesConfirmation, cancelConfirmation;
+    ArrayList<String>issuedDates, quantities; //Users associated with those components;
+    AlertDialog confirmationDialog;
+    String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numreq, numissue;
+    int count = 0;
+
     @Override
     public void onBackPressed() {
         currentUsername = getIntent().getExtras().getString("currentusername");
@@ -72,11 +81,10 @@ int count = 0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_each_component);
+        ButterKnife.bind(this);
         users = new ArrayList<>();
         issuedDates = new ArrayList<>();
         quantities =  new ArrayList<>();
-
-        BASE_URL_MEMBER = getResources().getString(R.string.base_url);
 
         //Fetching the details of the component from the previous activity
         id = getIntent().getExtras().getString("componentId");
@@ -91,12 +99,6 @@ int count = 0;
         numissue = getIntent().getExtras().getString("numissued");
         token = getIntent().getExtras().getString("token");
 
-        name = findViewById(R.id.componentName);
-        availability = findViewById(R.id.componentsAvailable);
-        value = findViewById(R.id.componentValue);
-        listOfIssuers = findViewById(R.id.listOfComponentIssuers);
-        fab = findViewById(R.id.issueAComponent);
-        noIssuers = findViewById(R.id.noIssuers);
         listOfIssuers.setVisibility(View.GONE);
         progressDialog = new ProgressDialog(EachComponentActivity.this);
         progressDialog.setMessage("Loading...");

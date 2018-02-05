@@ -16,17 +16,24 @@ import com.ieeevit.componentbank.R;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Yash 1300 on 12-12-2017.
  */
 
 public class ComponentsListAdapter extends ArrayAdapter {
-Context context;
-List<Component> components;
-List<String> dates;
 
-TextView name, code, available, date;
-int choice;
+    @BindView(R.id.componentsListComponentName) TextView name;
+    @BindView(R.id.componentsListComponentAvailability) TextView available;
+    @BindView(R.id.componentsListComponentDate) TextView date;
+
+    Context context;
+    List<Component> components;
+    List<String> dates;
+
+    int choice;
 
     public ComponentsListAdapter(@NonNull Context context, List<Component> components, List<String> dates,int choice) {
         super(context, R.layout.adapter_components_list, components);
@@ -35,18 +42,15 @@ int choice;
         this.dates = dates;
         this.choice = choice;
     }
+
     @SuppressLint("ResourceAsColor")
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.adapter_components_list, parent, false);
-        name = v.findViewById(R.id.componentsListComponentName);
-        //code = v.findViewById(R.id.componentsListComponentId);
-        available = v.findViewById(R.id.componentsListComponentAvailability);
-        date = v.findViewById(R.id.componentsListComponentDate);
+        ButterKnife.bind(this, v);
 
         name.setText(components.get(position).getName()); // The name of the component
-        //code.setText(components.get(position).getCode()); // The code of the component
         date.setVisibility(View.INVISIBLE);
         if (choice == 0){
             date.setVisibility(View.VISIBLE);

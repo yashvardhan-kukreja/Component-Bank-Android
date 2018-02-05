@@ -25,6 +25,9 @@ import com.ieeevit.componentbank.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -37,11 +40,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class UserComponentsFragment extends Fragment {
-    Context context;
-    ListView components;
+
+    @BindView(R.id.componentsList) ListView components;
+    @BindString(R.string.base_url) String BASE_URL_MEMBER;Context context;
+
     List<Component> componentList;
     ProgressDialog progressDialog;
-    String COMPONENT_LIST_GET_URL;
     String currentUsername, currentUserEmail, currentUserRegNum, currentUserPhoneNum, numreq, numissue, token;
 
     @SuppressLint("ValidFragment")
@@ -60,15 +64,16 @@ public class UserComponentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user_components_page, container, false);
-        components = v.findViewById(R.id.componentsList);
+        ButterKnife.bind(this, v);
+
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading the components...");
         progressDialog.setCancelable(false);
         progressDialog.show();
         componentList = new ArrayList<>();
-        COMPONENT_LIST_GET_URL = getResources().getString(R.string.base_url);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(COMPONENT_LIST_GET_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        // Creating the retrofit instance
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL_MEMBER).addConverterFactory(GsonConverterFactory.create()).build();
         MemberAPI memberAPI = retrofit.create(MemberAPI.class);
 
         // Network Call for getting the list of all the components
