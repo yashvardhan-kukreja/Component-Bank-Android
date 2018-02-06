@@ -104,52 +104,6 @@ public class UnauthUsersFragment extends Fragment {
 
         // End of the network call
 
-
-        /* //Request for getting the unauthorized members
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_UNAUTH_USERS_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String success = jsonObject.getString("success");
-                    String message = jsonObject.getString("message");
-                    if (success.equals("false")){
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    names.clear();
-                    regnums.clear();
-                    JSONArray jsonArray = jsonObject.getJSONArray("users");
-                    for (int i=0;i<jsonArray.length();i++){
-                        names.add(jsonArray.getJSONObject(i).getString("name"));
-                        regnums.add(jsonArray.getJSONObject(i).getString("regno"));
-                        ListOfUnauthUsersAdapter unauthAdapter = new ListOfUnauthUsersAdapter(context, names, regnums);
-                        unauthList.setAdapter(unauthAdapter);
-                    }
-
-                } catch (JSONException e) {
-                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                volleyError.printStackTrace();
-                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return params;
-            }
-        };
-        Volley.newRequestQueue(context).add(stringRequest);
-        //End of the request */
-
-
         unauthList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

@@ -192,46 +192,6 @@ public class AdminComponentsFragment extends Fragment {
                                 }
                             });
                             // End of the network Call
-
-                            /*StringRequest stringRequest1 = new StringRequest(Request.Method.POST, ADD_COMPONENTS_URL, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String s) {
-                                    try {
-                                        JSONObject jsonObject1 = new JSONObject(s);
-                                        String success = jsonObject1.getString("success");
-                                        String message = jsonObject1.getString("message");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                        if (success.equals("false")){
-                                            dialog.dismiss();
-                                            return;
-                                        }
-                                        Intent intent = new Intent(context, AdminTabbedActivity.class);
-                                        intent.putExtra("token", token);
-                                        intent.putExtra("pagerItem",  "2");
-                                        startActivity(intent);
-                                    } catch (JSONException e) {
-                                        Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    volleyError.printStackTrace();
-                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                }
-                            }){
-                                @Override
-                                protected Map<String, String> getParams() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("id", compId);
-                                    params.put("quantity", Integer.toString(count));
-                                    params.put("token", token);
-                                    return params;
-                                }
-                            };
-                            Volley.newRequestQueue(context).add(stringRequest1);
-                            //End of the request*/
                         }
                     });
 

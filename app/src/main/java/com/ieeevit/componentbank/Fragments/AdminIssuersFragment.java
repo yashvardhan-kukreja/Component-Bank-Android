@@ -143,63 +143,6 @@ public class AdminIssuersFragment extends Fragment {
         });
         // End of the network call
 
-        /*StringRequest stringRequest = new StringRequest(Request.Method.POST, main_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String success = jsonObject.getString("success");
-                    String message = jsonObject.getString("message");
-                    if (success.equals("false")){
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    dates.clear();
-                    users.clear();
-                    quantities.clear();
-                    transactionIds.clear();
-                    compNames.clear();
-                    JSONArray jsonArray = jsonObject.getJSONArray("output");
-                    if (jsonArray.length() == 0)
-                        progressDialog.dismiss();
-                    else {
-
-                        for (int i=(jsonArray.length()-1);i>-1;i--){
-                            String timestamp = jsonArray.getJSONObject(i).getString("date");
-                            dates.add(syncTimeStamp(timestamp));
-                            quantities.add(jsonArray.getJSONObject(i).getString("quantity"));
-                            compNames.add(jsonArray.getJSONObject(i).getString("componentName"));
-                            transactionIds.add(jsonArray.getJSONObject(i).getString("_id"));
-                            users.add((new User(jsonArray.getJSONObject(i).getJSONObject("memberId").getString("name"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("regno"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("email"), jsonArray.getJSONObject(i).getJSONObject("memberId").getString("phoneno"))));
-                            issuers.setAdapter((new ListOfIssuersAdapter(context, users, dates, quantities, compNames, choice)));
-                            if (i == 0 )
-                                progressDialog.dismiss();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    progressDialog.dismiss();
-                    Toast.makeText(context, "An error occured!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                progressDialog.dismiss();
-                volleyError.printStackTrace();
-                Toast.makeText(context, "An error occured!!", Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return params;
-            }
-        };
-        Volley.newRequestQueue(context).add(stringRequest);
-        //End of the request*/
-
         issuers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -243,42 +186,6 @@ public class AdminIssuersFragment extends Fragment {
                                 }
                             });
                             // End of the network call
-
-
-                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, RETURN_COMPONENT_URL, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String s) {
-                                    // progressDialog.dismiss();
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(s);
-                                        String message = jsonObject.getString("message");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                        Intent i = new Intent(context, AdminTabbedActivity.class);
-                                        i.putExtra("token", token);
-                                        i.putExtra("pagerItem",  "1");
-                                        getContext().startActivity(i);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    volleyError.printStackTrace();
-                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                }
-                            }){
-                                @Override
-                                protected Map<String, String> getParams() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("id", transId);
-                                    params.put("token", token);
-                                    return params;
-                                }
-                            };
-                            Volley.newRequestQueue(context).add(stringRequest);*/
                         }
                     });
                     cancel.setOnClickListener(new View.OnClickListener() {
@@ -319,40 +226,6 @@ public class AdminIssuersFragment extends Fragment {
                                 }
                             });
                             // End of the network call
-
-                            /*StringRequest stringRequest1 = new StringRequest(Request.Method.POST, APPROVE_REQUEST_URL, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String s) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(s);
-                                        String message = jsonObject.getString("message");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                        Intent i = new Intent(context, AdminTabbedActivity.class);
-                                        i.putExtra("token", token);
-                                        i.putExtra("pagerItem",  "0");
-                                        getContext().startActivity(i);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    volleyError.printStackTrace();
-                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                }
-                            }){
-                                @Override
-                                protected Map<String, String> getParams() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("id", transId);
-                                    params.put("token", token);
-                                    return params;
-                                }
-                            };
-                            Volley.newRequestQueue(context).add(stringRequest1);*/
                         }
                     });
                     cancel.setOnClickListener(new View.OnClickListener() {
@@ -384,45 +257,6 @@ public class AdminIssuersFragment extends Fragment {
                                 }
                             });
                             // End of the network call
-
-                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, DELETE_REQUEST_URL, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String s) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(s);
-                                        String success = jsonObject.getString("success");
-                                        String message = jsonObject.getString("message");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                        if (success.equals("false")){
-                                            dialog.dismiss();
-                                            return;
-                                        }
-                                        Intent i = new Intent(context, AdminTabbedActivity.class);
-                                        i.putExtra("token", token);
-                                        i.putExtra("pagerItem",  "0");
-                                        getContext().startActivity(i);
-                                    } catch (JSONException e) {
-                                        Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    volleyError.printStackTrace();
-                                    Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show();
-                                }
-                            }){
-                                @Override
-                                protected Map<String, String> getParams() throws AuthFailureError {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("id", transId);
-                                    params.put("token", token);
-                                    return params;
-                                }
-                            };
-                            Volley.newRequestQueue(context).add(stringRequest);
-                            //End of the request*/
 
                             dialog.dismiss();
                         }

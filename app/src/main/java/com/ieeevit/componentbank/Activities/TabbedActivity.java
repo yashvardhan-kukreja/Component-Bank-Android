@@ -80,7 +80,6 @@ public class TabbedActivity extends AppCompatActivity {
                 @Override
                 public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
                     super.onTargetDismissed(view, userInitiated);
-                    //TapTargetView.showFor(TabbedActivity.this, TapTarget.forView(history, "History!", "List of components you have issued and returned successfully").outerCircleColor(R.color.rippleColor).transparentTarget(true));
                 }
             });
             editor2.putString("firsttime", "true");

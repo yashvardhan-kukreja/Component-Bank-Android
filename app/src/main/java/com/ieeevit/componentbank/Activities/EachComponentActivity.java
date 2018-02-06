@@ -21,7 +21,6 @@ import com.ieeevit.componentbank.Classes.User;
 import com.ieeevit.componentbank.NetworkAPIs.MemberAPI;
 import com.ieeevit.componentbank.NetworkModels.BasicModel;
 import com.ieeevit.componentbank.NetworkModels.GetIssuersModel;
-import com.ieeevit.componentbank.NetworkModels.TransactionModel;
 import com.ieeevit.componentbank.NetworkModels.TransactionReqIssuersModel;
 import com.ieeevit.componentbank.R;
 

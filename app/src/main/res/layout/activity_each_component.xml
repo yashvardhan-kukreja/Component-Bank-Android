@@ -78,6 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="@dimen/cardview_default_radius"
+                android:backgroundTint="#515151"
                 app:cardElevation="5dp"
                 >
 
