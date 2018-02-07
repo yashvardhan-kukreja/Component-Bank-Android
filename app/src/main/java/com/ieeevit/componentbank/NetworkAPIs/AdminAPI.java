@@ -48,7 +48,7 @@ public interface AdminAPI {
             @Field("regno") String regno
     );
 
-    @GET("unauthorizedUsers")
+    @POST("unauthorizedUsers")
     Call<UnauthorizedUsersModel> getUnauthorizedUsers(
             @Header("x-access-token") String token
     );
@@ -75,12 +75,12 @@ public interface AdminAPI {
             @Field("quantity") String quantity
     );
 
-    @GET("requests")
+    @POST("requests")
     Call<GetMemberReqIssueModel> getRequests(
             @Header("x-access-token") String token
     );
 
-    @GET("issuers")
+    @POST("issuers")
     Call<GetMemberReqIssueModel> getIssuers(
             @Header("x-access-token") String token
     );

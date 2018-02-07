@@ -44,6 +44,7 @@ public class EachComponentActivity extends AppCompatActivity {
     @BindView(R.id.issueAComponent) FloatingActionButton fab;
     @BindView(R.id.noIssuers) TextView noIssuers;
     @BindString(R.string.base_url) String BASE_URL_MEMBER;
+
     TextView countText;
     ProgressDialog progressDialog;
     String token;

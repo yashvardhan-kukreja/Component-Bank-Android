@@ -31,7 +31,7 @@ public interface MemberAPI {
             @Field("quantity") String quantity
     );
 
-    @GET("getAllComponents")
+    @POST("getAllComponents")
     Call<AllComponentsModel> getAllComponents(
             @Header("x-access-token") String token
     );
@@ -43,20 +43,19 @@ public interface MemberAPI {
             @Field("id") String componentId
     );
 
-    @GET("getIssuedComponents")
+    @POST("getIssuedComponents")
     Call<GetMemberComponentsModel> getIssuedComponents(
             @Header("x-access-token") String token
     );
 
-    @GET("getHistory")
+    @POST("getHistory")
     Call<GetMemberComponentsModel> getHistory(
             @Header("x-access-token") String token
     );
 
-    @GET("getRequestedComponents")
+    @POST("getRequestedComponents")
     Call<GetMemberComponentsModel> getRequestedComponents(
             @Header("x-access-token") String token
     );
-
-
+    
 }
