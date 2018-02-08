@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ieeevit.componentbank">
+    package="com.ieeevit.componentbankredefined">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -13,25 +13,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activities.LogInActivity"
+            android:name="com.ieeevit.componentbankredefined.Activities.LogInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme2"></activity>
         <activity
-            android:name=".Activities.Register"
+            android:name="com.ieeevit.componentbankredefined.Activities.Register"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
         <activity
-            android:name=".Activities.TabbedActivity"
+            android:name="com.ieeevit.componentbankredefined.Activities.TabbedActivity"
             android:label="@string/title_activity_tabbed"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Activities.EachComponentActivity"
+            android:name="com.ieeevit.componentbankredefined.Activities.EachComponentActivity"
             android:label="Component Details"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme3" />
         <activity
-            android:name=".Activities.SplashScreen"
+            android:name="com.ieeevit.componentbankredefined.Activities.SplashScreen"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme2">
             <intent-filter>
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.AdminTabbedActivity"
+            android:name="com.ieeevit.componentbankredefined.Activities.AdminTabbedActivity"
             android:label="Admin"
             android:theme="@style/AppTheme"></activity>
     </application>
