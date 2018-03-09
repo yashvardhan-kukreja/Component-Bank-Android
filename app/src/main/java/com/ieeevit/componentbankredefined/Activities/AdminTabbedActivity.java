@@ -68,6 +68,8 @@ public class AdminTabbedActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         currentPagerItem = getIntent().getExtras().getString("pagerItem");
+        if (currentPagerItem == null)
+            currentPagerItem = "0";
         mViewPager.setCurrentItem(Integer.parseInt(currentPagerItem));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

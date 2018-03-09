@@ -96,6 +96,7 @@ public class AdminComponentsFragment extends Fragment {
         plus = dialogView.findViewById(R.id.plusButton);
         countText = dialogView.findViewById(R.id.countText);
         builder.setView(dialogView);
+        dialog = builder.create();
 
         componentList = new ArrayList<>();
         valuesList = new ArrayList<>();
@@ -150,8 +151,6 @@ public class AdminComponentsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     compId  = componentList.get(i).getId();
-                    dialog = builder.create();
-                    dialog.setCancelable(false);
                     dialog.show();
                     plus.setOnClickListener(new View.OnClickListener() {
                         @Override
